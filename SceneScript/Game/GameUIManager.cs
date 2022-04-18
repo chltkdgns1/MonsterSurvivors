@@ -1,0 +1,340 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+public class GameUIManager : MonoBehaviour
+{
+    static public GameUIManager instance = null;
+
+    private GameObject      m_obPauseBackScreen;
+    private GameObject      m_obExitPlayGame;
+    private GameObject      m_obGoHomeLoading;
+    private GameObject      m_obDeadQuestion;
+    private GameObject      m_obRestartScreen;
+    private Text            m_obRestartText;
+    private GameObject      m_obTouchPad;
+    private GameObject      m_obTouchCircle;
+    private GameObject      m_obLevelUp;
+    private GameObject      m_obGetTreasureBox;
+    private GameObject      m_obSkillStatus;
+
+    [SerializeField]
+    private Image           m_ImageLevelGage;
+    [SerializeField]
+    private Text            m_TextLevelPercent;
+    [SerializeField]
+    private Text            m_TextLevelText;
+    [SerializeField]
+    private Text            m_TextTime;
+
+    private GameObject  []  m_obSkillTouch;
+    private GameObject  []  m_obSkillCoolTouch;
+    private Text        []  m_obSkillCoolTimeText;
+    private Image       []  m_obSkillCoolTimeImage;
+    private float       []  m_nSkillCoolTime;
+    private bool        []  m_nCoolTimeManage;
+
+    private int             m_nRestart;
+
+    private Transform       m_canvasTransform;
+    private float           m_fCanvasHeight;
+    private float           m_fCanvasWidth;
+    private Vector3         m_vCalibValue;
+
+    private float           m_fTime;
+
+    // 스킬
+    [SerializeField]
+    private Image       [] m_ImageSkill;
+    [SerializeField]
+    private Text        [] m_TextSkillName;
+    [SerializeField]
+    private Text        [] m_TextSkillComment;
+    [SerializeField]
+    private Text        [] m_TextSkillValue;
+    [SerializeField]
+    private GameObject  [] m_obNewText;
+
+    private int         [] m_nSkill = new int[3];
+    private int         [] m_nType  = new int[3];
+    private float       [] m_fValue = new float[3];
+
+    // 스킬 끝
+
+    public Vector3 GetCanvasCalibValue() { return m_vCalibValue;}
+
+    void Awake()
+    {
+        if (instance == null)   instance = this;  
+        else                    Destroy(gameObject);
+
+        initObject();
+        Init();
+    }
+
+    void initObject()
+    {
+        m_canvasTransform           = GameObject.Find("Canvas").transform;
+        m_obPauseBackScreen         = GameObject.Find("PauseBackScreen");
+        m_obExitPlayGame            = GameObject.Find("ExitPlayGame");
+        m_obGoHomeLoading           = GameObject.Find("GoHomeLoading");
+        m_obDeadQuestion            = GameObject.Find("DeadQuestion");
+        m_obRestartScreen           = GameObject.Find("RestartScreen");
+        m_obTouchPad                = GameObject.Find("TouchPad");
+        m_obLevelUp                 = GameObject.Find("SkillSelectBack");
+        m_obGetTreasureBox          = GameObject.Find("TreasureBox");
+        m_obSkillStatus             = GameObject.Find("SkillStatus");
+
+
+
+        m_TextLevelText.text        = "1 Lv";
+        m_TextLevelPercent.text     = "0 %";
+        m_ImageLevelGage.fillAmount = 0f;
+        m_TextTime.text             = "00:00";
+    }
+
+  
+    void Init()
+    {
+         m_nRestart              = DefineManager.PLAYING_MAX_CONTINUE_COUNT;
+ 
+        if (m_obTouchPad != null) m_obTouchCircle = m_obTouchPad.transform.GetChild(0).gameObject;
+  
+        SetActive();
+
+        m_fCanvasWidth          = m_canvasTransform.GetComponent<RectTransform>().rect.width;
+        m_fCanvasHeight         = m_canvasTransform.GetComponent<RectTransform>().rect.height;
+        m_vCalibValue           = new Vector3(m_fCanvasWidth / 2, m_fCanvasHeight / 2);
+
+        m_fTime                 = 0f;
+    }
+
+    private void Start()
+    {
+
+    }
+
+    private void Update()
+    {
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        m_fTime += Time.deltaTime;
+        SetTimeText();
+        SetLevel();
+    }
+
+    void SetTimeText()
+    {
+        int nTime = (int)m_fTime;
+        int nHour = nTime / 60;
+        int nSecond = nTime % 60;
+        m_TextTime.text = GetTimeNum(nHour) + ":" + GetTimeNum(nSecond);
+    }
+
+    void SetLevel()
+    {
+        int level = PlayerOffline2D.instance.GetLevel();
+        m_TextLevelText.text = level + " Lv";
+        int levelMaxEx = OptionManager.instance.GetLevelEx(level);
+        float fPercent = (float)PlayerOffline2D.instance.GetEx() / levelMaxEx;
+        m_TextLevelPercent.text = (int)(fPercent * 100) + " %";
+        m_ImageLevelGage.fillAmount = fPercent;
+    }
+
+    void PrintExMax()
+    {
+        m_TextLevelPercent.text = "100 %";
+        m_ImageLevelGage.fillAmount = 1f;
+    }
+    string GetTimeNum(int num)
+    {
+        return num >= 10 ? num.ToString() : "0" + num;
+    }
+
+    void SetActive()
+    {
+        if(m_obPauseBackScreen      != null)    m_obPauseBackScreen.SetActive   (false);
+        if(m_obExitPlayGame         != null)    m_obExitPlayGame.SetActive      (false);
+        if(m_obGoHomeLoading        != null)    m_obGoHomeLoading.SetActive     (false);
+        if(m_obTouchPad             != null)    m_obTouchPad.SetActive          (false);
+        if(m_obLevelUp              != null)    m_obLevelUp.SetActive           (false);
+        if(m_obGetTreasureBox       != null)    m_obGetTreasureBox.SetActive    (false);
+        if (m_obSkillStatus         != null)    m_obSkillStatus.SetActive(false);
+
+        if (m_obRestartScreen != null)
+        {
+            m_obRestartScreen.SetActive(false);
+            m_obRestartText = m_obRestartScreen.transform.GetChild(0).gameObject.GetComponent<Text>();
+        }
+        if (m_obDeadQuestion != null)   m_obDeadQuestion.SetActive          (false);
+    }
+
+    public void SetActiveSkillStatus(bool flag)
+    {
+        m_obSkillStatus.SetActive(flag);
+    }
+
+    public void SetRestart(int value)   { m_nRestart = value; }
+    public int  GetRestart()             { return m_nRestart; }
+    public void PrintDeadQuestion(bool flag)
+    {
+        m_obDeadQuestion.SetActive(flag);
+    }
+
+    public void SetActivePauseBackScreen(bool flag)
+    {
+        m_obPauseBackScreen.SetActive(flag);
+
+        bool bEscape = !flag;
+
+        if(bEscape)     PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);    
+        else            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+     
+        AndroidKeyUIManager.instance.SetEscape(flag);
+    }
+
+    public void SetActiveExitPlayGame(bool flag)
+    {
+        m_obExitPlayGame.SetActive(flag);
+    }
+
+    public void SetActiveGoHomeLoading(bool flag)
+    {
+        m_obGoHomeLoading.SetActive(flag);
+    }
+
+    public void SetActiveRestartScreen(bool flag)
+    {
+        m_obRestartScreen.SetActive(flag);
+    }
+
+    public void SetActiveLevelUp(bool flag)
+    {
+        m_obLevelUp.SetActive(flag);
+    }
+
+    public void SetActiveTouchPad(bool flag)
+    {
+        m_obTouchPad.SetActive(flag);
+    }
+
+    public void SetPositionTouchPad(Vector3 Position)
+    {
+        m_obTouchPad.transform.position = Position;
+    }
+
+    public void SetPositionTouchCircle(Vector3 Position)
+    {
+        m_obTouchCircle.transform.position = Position;
+    }
+
+    public void RestartGameTimer()
+    {
+        SetActiveRestartScreen(true);
+        StartCoroutine(RestartGameTimerRoutine(3f));
+    }
+
+
+
+    IEnumerator RestartGameTimerRoutine(float timer)
+    {
+        m_obRestartText.text = ((int)timer).ToString();
+
+        int tempTimer = (int)timer;
+
+        while (timer >= 0)
+        {
+            timer -= Time.deltaTime;
+
+            if((int)timer + 1 != tempTimer)
+            {
+                tempTimer = (int)timer + 1;
+                m_obRestartText.text = tempTimer.ToString();
+            }
+
+            yield return null;
+        }
+
+        SetActiveRestartScreen(false);
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NO_ENEMY);
+    }
+
+    public void PlayerLevelUp()
+    {
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        PrintExMax();
+
+        int nSkill = 0, nType = 0;
+        float fValue = 0;
+
+        for (int i = 0; i < 3; i++)
+        {
+            SkillManager.instance.GetRandSkillStatus(ref nSkill, ref nType, ref fValue);
+
+            int nInSprite   = OptionManager.instance.GetSpriteInImage(nSkill);
+            string sPath    = OptionManager.instance.GetSkillImagePath(nSkill);
+
+            if (nInSprite != 0) Module.SetSpriteImageAll(m_ImageSkill[i], sPath, nInSprite);          // 스프라이트 이미지 내에 있는 이미지라면 
+            else                Module.SetSpriteImage(m_ImageSkill[i], sPath);
+
+            m_TextSkillName[i].text = OptionManager.instance.GetSkillName(nSkill);
+
+            List<string> templist   = Module.Split(OptionManager.instance.GetSkillComment(nSkill), '.');
+            string temp             = Module.MergeString(templist, '.', true);
+
+            m_TextSkillComment[i].text = temp;
+
+            bool bIsExist           = SkillManager.instance.IsExistSkill(nSkill);
+            if (bIsExist == false) m_obNewText[i].SetActive(true);
+
+            m_TextSkillValue[i].text = SetSkillValue(nType, fValue);
+
+            m_nSkill[i]     = nSkill;
+            m_nType[i]      = nType;
+            m_fValue[i]     = fValue;
+        }
+        SetActiveLevelUp(true);
+    }
+
+    public void PlayerLevelUpEnd(int index) // 첫번째, 두번째 , 세번째 스킬 인덱스
+    {
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        SetActiveLevelUp(false);
+        SelectSkill(m_nSkill[index], m_nType[index], m_fValue[index]);   
+    }
+
+    void SelectSkill(int nSkill, int nType, float fValue)
+    {
+        SkillManager.instance.SkillJudge(nSkill, nType, fValue);
+    }
+
+    public string SetSkillValue(int nType, float fValue)
+    {
+        string sSkillValueText = "";
+        switch ((DefineManager.SKILL)nType)
+        {        
+            case DefineManager.SKILL.SKILL_SIZE_PERCENT         : sSkillValueText = "범위 " + ((int)(fValue * 100)).ToString() + " % 증가";  break;
+            case DefineManager.SKILL.SKILL_COOLTIME_PERCENT     : sSkillValueText = "쿨타임 " + ((int)(fValue * 100)).ToString() + " % 감소"; break; 
+            //case DefineManager.SKILL.SKILL_ALL_COOLTIME         : sSkillValueText = "(ALL) 쿨타임 " + fValue.ToString("F3") + " 감소"; break; 
+            case DefineManager.SKILL.SKILL_DAMAGE               : sSkillValueText = "데미지 " + ((int)fValue).ToString() + " 증가"; break; 
+            case DefineManager.SKILL.SKILL_DAMAGE_PERCENT       : sSkillValueText = "데미지 " + ((int)(fValue * 100)).ToString() + " % 증가"; break; 
+            case DefineManager.SKILL.SKILL_COUNT                : sSkillValueText = "발사체 증가"; break;
+            case DefineManager.SKILL.SKILL_NUCKBACK_PERCENT     : sSkillValueText = "넉백 " + ((int)(fValue * 100)).ToString() + " % 증가"; break;
+            case DefineManager.SKILL.SKILL_BLOOD_PERCENT        : sSkillValueText = "피흡률 " + (fValue * 100).ToString("F1") + " % 증가"; break;
+        }
+        return sSkillValueText;
+    }
+
+    public void GetTreasureBox(int nLevel)
+    {
+        TreasureBoxManager.instance.OpenBoxAdd(nLevel);
+        //SetActiveTreasureBox(true);
+        //PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        //TreasureBoxManager.instance.PrintBox(nLevel);
+    }
+
+    public void SetActiveTreasureBox(bool flag)
+    {
+        m_obGetTreasureBox.SetActive(flag);
+    }
+}
