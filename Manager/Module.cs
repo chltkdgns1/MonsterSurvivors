@@ -142,4 +142,16 @@ public class Module : MonoBehaviour
         to[from.Length] = sAdd;
         return to;
     }
+
+    static public void CirclePosition(List<GameObject> obList, Vector3 vPosition, float fDistance)
+    {
+        int sz = obList.Count;
+        float fAngle = 360f / sz;
+
+        for(int i = 0; i < sz; i++)
+        {
+            float fCircleAng = fAngle * i;
+            obList[i].transform.position = Quaternion.Euler(0, 0, fCircleAng) * Vector3.up * fDistance + vPosition;
+        }
+    }
 }
