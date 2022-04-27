@@ -15,7 +15,6 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     static public PlayerOffline2D instance = null;
 
     private Vector3 m_targetPosition;     // 목적지 위치 포지션
-    private Vector3 m_Direction;
 
     private Move2D      m_obMove;
     private Animator    m_obAnim;
@@ -108,7 +107,6 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         m_ObNearestObject   = null;
         m_fDistance         = 1e5f;
 
-        m_Direction = new Vector3(0, 0, 0);
         m_obMove    = GetComponent<Move2D>();
         m_obAnim    = GetComponent<Animator>();
 
@@ -472,6 +470,12 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
             m_lDamageTime = DateTime.Now.Ticks;
             DamagedMonster();
         }
+
+        if (collision.CompareTag("ThrowAttack"))
+        {
+            DamagedMonster();
+        }
+
         //Damage temp = other.GetComponent<Damage>();
         //if (temp == null) return;       // 부딪힌 오브젝트가 데미지를 갖고 있다면, 데미지를 입음.
 
@@ -551,7 +555,6 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         // 오직 여기에서만 캐릭터의 방향을 잡는다. 
 
         Vector3 tempPosition = transform.position + position;
-        m_Direction = tempPosition - transform.position;
         SetClicked(tempPosition, true);
     }
 

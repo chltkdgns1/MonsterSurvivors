@@ -93,7 +93,7 @@ public class Skill : MonoBehaviour
                 transform.position += new Vector3(tempVec.x, tempVec.y, 0);
             }
         }
-        else transform.position = m_vStartPosition + PlayerOffline2D.instance.transform.position;      
+        else transform.position = m_vStartPosition + new Vector3(PlayerOffline2D.instance.transform.position.x, PlayerOffline2D.instance.transform.position.y,transform.position.z);      
     }
 
     public float GetDamage()

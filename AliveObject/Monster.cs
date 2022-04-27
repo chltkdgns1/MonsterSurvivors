@@ -4,6 +4,13 @@ using UnityEngine;
 using System;
 public class Monster : MonoBehaviour, MonsterInterface
 {
+
+    [SerializeField]
+    private bool m_bCloseRangeMonster = false;  // flase : 근거리 , true : 원거리
+
+    [SerializeField]
+    private float m_fFarRangeDistance = 3f;
+
     private int m_nKey = -1;
 
     [SerializeField]
@@ -108,11 +115,19 @@ public class Monster : MonoBehaviour, MonsterInterface
         if (m_bDeath == true) return;
         if (m_bDamage == true) return;
         SetDir();
-        m_Move2D.RunRigid(m_ObPlayer.transform.position, m_fSpeed);
+
+        if (m_bCloseRangeMonster)                                                                           // 원거리 몬스터일 경우에는
+        {
+            if (m_fFarRangeDistance <= Vector2.Distance(m_ObPlayer.transform.position, transform.position)) // 정해진 거리만 접근하고
+            {
+                m_Move2D.RunRigid(m_ObPlayer.transform.position, m_fSpeed);                                 // 정해진 거리 밖에 있다면 이동 가능
+            }
+        }
+        else
+        {
+            m_Move2D.RunRigid(m_ObPlayer.transform.position, m_fSpeed);
+        }
     }
-
-
-
 
     public void RandomAbility()
     {
@@ -121,10 +136,12 @@ public class Monster : MonoBehaviour, MonsterInterface
         m_nBox              = UnityEngine.Random.Range(m_nMinBox, m_nMaxBox);
         m_nDamage           = 1;
         m_bDeath            = false;
-        float xpos          = UnityEngine.Random.Range(-m_fPositionRange, m_fPositionRange);
-        float ypos          = UnityEngine.Random.Range(-m_fPositionRange, m_fPositionRange);
         m_lNuckBackTime     = 0;
-        transform.position  = new Vector3(xpos, ypos, transform.position.z);
+
+        Module.GetRandPosition(transform, m_fPositionRange, m_fPositionRange);
+        //float xpos          = UnityEngine.Random.Range(-m_fPositionRange, m_fPositionRange);
+        //float ypos          = UnityEngine.Random.Range(-m_fPositionRange, m_fPositionRange);
+        //transform.position  = new Vector3(xpos, ypos, transform.position.z);
 
         // 위치를 잡아주어야함.
 
@@ -255,4 +272,6 @@ public class Monster : MonoBehaviour, MonsterInterface
         Vector2 monPos = transform.position;
         PlayerOffline2D.instance.SetNearestObject(gameObject, Vector2.Distance(playerPos, monPos),flag);
     }
+
+    public bool GetCloserRange() { return m_bCloseRangeMonster; }
 }

@@ -11,12 +11,14 @@ public class GameUIManager : MonoBehaviour
     private GameObject      m_obGoHomeLoading;
     private GameObject      m_obDeadQuestion;
     private GameObject      m_obRestartScreen;
+    private GameObject      m_obTimeSetEndGame;
     private Text            m_obRestartText;
     private GameObject      m_obTouchPad;
     private GameObject      m_obTouchCircle;
     private GameObject      m_obLevelUp;
     private GameObject      m_obGetTreasureBox;
     private GameObject      m_obSkillStatus;
+    private GameObject      m_obGameOver;
 
     [SerializeField]
     private Image           m_ImageLevelGage;
@@ -84,7 +86,7 @@ public class GameUIManager : MonoBehaviour
         m_obLevelUp                 = GameObject.Find("SkillSelectBack");
         m_obGetTreasureBox          = GameObject.Find("TreasureBox");
         m_obSkillStatus             = GameObject.Find("SkillStatus");
-
+        m_obGameOver                = GameObject.Find("GameOver");
 
 
         m_TextLevelText.text        = "1 Lv";
@@ -120,14 +122,27 @@ public class GameUIManager : MonoBehaviour
         m_fTime += Time.deltaTime;
         SetTimeText();
         SetLevel();
+
+        if(TimeSetEndGame() == true)
+        {
+
+        }
+    }
+
+
+    bool TimeSetEndGame()
+    {
+        int nSecond = (int)m_fTime;
+        if (nSecond >= 1800) return true;
+        return false;
     }
 
     void SetTimeText()
     {
         int nTime = (int)m_fTime;
-        int nHour = nTime / 60;
+        int nMinute = nTime / 60;
         int nSecond = nTime % 60;
-        m_TextTime.text = GetTimeNum(nHour) + ":" + GetTimeNum(nSecond);
+        m_TextTime.text = GetTimeNum(nMinute) + ":" + GetTimeNum(nSecond);
     }
 
     void SetLevel()
@@ -158,7 +173,8 @@ public class GameUIManager : MonoBehaviour
         if(m_obTouchPad             != null)    m_obTouchPad.SetActive          (false);
         if(m_obLevelUp              != null)    m_obLevelUp.SetActive           (false);
         if(m_obGetTreasureBox       != null)    m_obGetTreasureBox.SetActive    (false);
-        if (m_obSkillStatus         != null)    m_obSkillStatus.SetActive(false);
+        if(m_obSkillStatus          != null)    m_obSkillStatus.SetActive       (false);
+        if(m_obGameOver             != null)    m_obGameOver.SetActive          (false);
 
         if (m_obRestartScreen != null)
         {
@@ -177,6 +193,7 @@ public class GameUIManager : MonoBehaviour
     public int  GetRestart()             { return m_nRestart; }
     public void PrintDeadQuestion(bool flag)
     {
+        m_obGameOver.SetActive(flag);
         m_obDeadQuestion.SetActive(flag);
     }
 
@@ -325,13 +342,28 @@ public class GameUIManager : MonoBehaviour
         return sSkillValueText;
     }
 
-    public void GetTreasureBox(int nLevel)
+    public void GetTreasureBox(int nLevel, bool bAd = false)
     {
-        TreasureBoxManager.instance.OpenBoxAdd(nLevel);
+        string[] param = new string[1];
+        param[0] = nLevel.ToString();
+
+        if(bAd == true) GoogleAdsManager.instance.FrontShow(OpenBoxAD, param);  
+        else            TreasureBoxManager.instance.OpenBoxAdd(nLevel);
+
         //SetActiveTreasureBox(true);
         //PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
         //TreasureBoxManager.instance.PrintBox(nLevel);
     }
+
+    void OpenBoxAD(bool bSuccess, string[] param)
+    {
+        if (bSuccess == false) return;
+        if (param == null || param.Length != 1) return;
+        int nLevel = int.Parse(param[0]);
+        TreasureBoxManager.instance.OpenBoxAdd(nLevel);
+    }
+
+
 
     public void SetActiveTreasureBox(bool flag)
     {

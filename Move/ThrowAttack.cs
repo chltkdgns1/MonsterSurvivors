@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ThrowAttack : MonoBehaviour
 {
-    private bool m_bInit = false;
     private GameObject m_ObTargerObject = null;
 
     [SerializeField]
@@ -12,7 +11,7 @@ public class ThrowAttack : MonoBehaviour
                                                             // 2. 외부 인자로 입력받을 경우
 
     [SerializeField]
-    private int m_nThrowSize = 10;
+    private int m_nThrowSize = 1;
 
     private List<GameObject> m_ObjectPool = new List<GameObject>();
 
@@ -20,16 +19,13 @@ public class ThrowAttack : MonoBehaviour
     private int     m_nCreateIndex;
     private int     m_nObjectSize;
 
-
     public void InitThrow(GameObject targetOb)
     {
-        m_bInit = true;
         m_ObTargerObject = targetOb;
     }
 
     public void SetTargetObject(GameObject Ob)
     {
-        m_bInit = true;
         m_ObTargerObject = Ob;
     }
 
@@ -37,8 +33,14 @@ public class ThrowAttack : MonoBehaviour
     {
         for(int i = 0; i < nSize; i++)
         {
-            m_ObjectPool.Add(Instantiate(Ob, transform));
+            m_ObjectPool.Add(Instantiate(Ob, Ob.transform.position, Ob.transform.rotation));
             m_ObjectPool[i].SetActive(false);
+
+            ThrowObject temp = m_ObjectPool[i].GetComponent<ThrowObject>();
+            if (temp == null) continue;
+
+            temp.SetTargetObject(m_ObTargerObject);
+            temp.SetThrowTime(4f);
         }
     }
 
@@ -46,15 +48,14 @@ public class ThrowAttack : MonoBehaviour
     {
         for(int i = 0; i < m_ObjectPool.Count; i++)
         {
-            m_ObjectPool[i].transform.position = new Vector3(0, 0, 0);
+            m_ObjectPool[i].transform.position = transform.position;
             m_ObjectPool[i].SetActive(false);
         }
     }
 
     private void Awake()
     {
-        if (m_ObThrowObject != null)
-            SetObjectPool(m_ObTargerObject, m_nThrowSize);
+      
     }
 
     private void OnEnable()
@@ -65,13 +66,23 @@ public class ThrowAttack : MonoBehaviour
         m_nObjectSize = m_ObjectPool.Count;
     }
 
+    private void Start()
+    {
+        if (m_ObThrowObject != null)
+            SetObjectPool(m_ObThrowObject, m_nThrowSize);
+
+        SetAllStartPosition();
+        m_fCreateTime = 0f;
+        m_nCreateIndex = 0;
+        m_nObjectSize = m_ObjectPool.Count;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (m_bInit == false)           return;
         if (m_ObThrowObject == null)    return;
 
-        if(m_fCreateTime <= 0f)     // 0 이 되면 새로운 스킬 생성
+        if (m_fCreateTime <= 0f)     // 0 이 되면 새로운 스킬 생성
         {
             m_fCreateTime = 1f;
             CreateThrow(m_nCreateIndex++);
@@ -83,12 +94,7 @@ public class ThrowAttack : MonoBehaviour
 
     void CreateThrow(int index)
     {
-        m_ObjectPool[index].transform.position = new Vector3(0, 0, 0);
+        m_ObjectPool[index].transform.position = transform.position;
         m_ObjectPool[index].SetActive(true);
-    }
-    void DeleteThrow(int index)
-    {
-        m_ObjectPool[index].transform.position = new Vector3(0, 0, 0);
-        m_ObjectPool[index].SetActive(false);
     }
 }

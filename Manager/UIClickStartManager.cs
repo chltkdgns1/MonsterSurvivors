@@ -77,13 +77,13 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
         GoogleAdsManager.instance.FrontShow(ReOpenTreasureBoxCallBack);
     }
 
-    static void RestartAds(bool flag)
+    static void RestartAds(bool flag,string []param = null)
     {
         if (flag == true)       PlayerOffline2D.instance.SetRestart();
         else                    PlayerOffline2D.instance.ExitGame();
     }
 
-    static void ReOpenTreasureBoxCallBack(bool flag)
+    static void ReOpenTreasureBoxCallBack(bool flag, string[] param = null)
     {
         if (flag == true) TreasureBoxManager.instance.PrintBox(3);
         else;

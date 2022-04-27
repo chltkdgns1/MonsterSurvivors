@@ -30,7 +30,6 @@ public class MonsterManager : MonoBehaviour
         else                    Destroy(gameObject);
 
         init();
-        InitMonster();
     }
 
     void init()
@@ -60,6 +59,17 @@ public class MonsterManager : MonoBehaviour
     {
         GameObject tempOb = Instantiate(ObMonster, ObMonster.transform.position, Quaternion.identity);
         MonsterInterface tempComp = tempOb.GetComponent<MonsterInterface>();
+        Monster tempMonster = tempOb.GetComponent<Monster>();
+
+        if(tempMonster != null)
+        {
+            if(tempMonster.GetCloserRange() == true) // ¿ø°Å¸® 
+            {
+                ThrowAttack tempThrowAttck = tempOb.GetComponent<ThrowAttack>();
+                if (tempThrowAttck != null) tempThrowAttck.InitThrow(PlayerOffline2D.instance.gameObject);           
+            }
+        }
+
         tempComp.SetKey(m_nKey++);
         m_ObMonster.Add(tempOb);
         m_fMonsterRePrintTime.Add(fRePrintTime);
@@ -89,7 +99,7 @@ public class MonsterManager : MonoBehaviour
 
     void Start()
     {
-        
+        InitMonster();
     }
 
     // Update is called once per frame

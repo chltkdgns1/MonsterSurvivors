@@ -69,6 +69,10 @@ public class Move2D : MonoBehaviour
     //    return false;
     //}
 
+    public void RunRigidDir(Vector2 vTargetNomalize, float speed)
+    {
+        m_2DRigidbody.MovePosition(m_2DRigidbody.position + vTargetNomalize * speed * Time.deltaTime);
+    }
 
     public bool RunRigid(Vector3 targetPos, float speed, float fMargin = 0.0001f)
     {
@@ -85,14 +89,12 @@ public class Move2D : MonoBehaviour
         if (dis >= fMargin) // 차이가 아직 있다면
         {
             if (m_fMoveVersion == false)
-            {
-                transform.Translate((targetPos - transform.position) * speed * Time.deltaTime);
-            }
-
+                transform.Translate((targetPos - transform.position) * speed * Time.deltaTime); // 목적지와 가까워 질 수록 이동량이 많거나 적어짐.
+            
             else
             {
                 Vector2 temp = (targetPos - transform.position).normalized;
-                m_2DRigidbody.MovePosition(m_2DRigidbody.position + temp * speed);
+                m_2DRigidbody.MovePosition(m_2DRigidbody.position + temp * speed * Time.deltaTime);
             }
             return true;
         }
@@ -115,14 +117,12 @@ public class Move2D : MonoBehaviour
         if (dis >= fMargin) // 차이가 아직 있다면
         {
             if (m_fMoveVersion == false)
-            {
                 transform.Translate((targetPos - transform.position) * speed * Time.deltaTime);
-            }
-
+            
             else
             {
                 Vector3 temp = (targetPos - transform.position).normalized;
-                transform.position += temp * speed;
+                transform.position += temp * speed * Time.deltaTime;
             }
             return true;
         }

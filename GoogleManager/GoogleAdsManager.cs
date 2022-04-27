@@ -7,7 +7,7 @@ using GoogleMobileAds.Api;
 
 public class GoogleAdsManager : MonoBehaviour
 {
-    public delegate void AdsEndCallBack(bool bSuccess);
+    public delegate void AdsEndCallBack(bool bSuccess, string[] param = null);
     static public GoogleAdsManager instance = null;
 
     private InterstitialAd m_InterstitialAd;
@@ -23,6 +23,7 @@ public class GoogleAdsManager : MonoBehaviour
                                            //private AdRequest m_request;
 
     private AdsEndCallBack m_AdsEndFunc;
+    private string[] m_param;
     //private CommunicationTypeDataClass m_value;
 
     //private List<AdsEnd> list = new List<AdsEnd>();
@@ -81,7 +82,7 @@ public class GoogleAdsManager : MonoBehaviour
 
         m_InterstitialAd.OnAdClosed += (sender, e) =>
         {
-            m_AdsEndFunc(true);
+            m_AdsEndFunc(true, m_param);
         };
 
         m_InterstitialAd.OnAdFailedToShow += (sender, e) =>
@@ -112,9 +113,10 @@ public class GoogleAdsManager : MonoBehaviour
         }
     }
 
-    public void FrontShow(AdsEndCallBack AdsEndFunc)
+    public void FrontShow(AdsEndCallBack AdsEndFunc, string [] param = null)
     {
         m_AdsEndFunc = AdsEndFunc;
+        m_param = param;
 
         if (m_bAdCheck == false)
             m_InterstitialAd.Show();

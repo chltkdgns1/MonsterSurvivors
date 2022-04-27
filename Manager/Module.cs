@@ -16,7 +16,7 @@ public struct pair<T, A>
 }
 
 public class Module : MonoBehaviour
-{   
+{
     static public void ChangeDirection(GameObject ob, bool flg)
     {
         Vector3 tmp = ob.transform.localScale;
@@ -153,5 +153,17 @@ public class Module : MonoBehaviour
             float fCircleAng = fAngle * i;
             obList[i].transform.position = Quaternion.Euler(0, 0, fCircleAng) * Vector3.up * fDistance + vPosition;
         }
+    }
+
+    static public void GetRandPosition(Transform pTransform, float fWidth, float fHeight)
+    {
+        pTransform.transform.position = new Vector3(UnityEngine.Random.Range(-fWidth, fWidth), 
+            UnityEngine.Random.Range(-fHeight, fHeight), pTransform.transform.position.z);
+    }
+
+    static public void GetRandPosition(Transform pTransform, Vector3 vPosition, float fDistance)
+    {
+        Vector3 vDir        = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1));
+        pTransform.position = vPosition + vDir.normalized * UnityEngine.Random.Range(1, Mathf.Max(fDistance, 1));
     }
 }

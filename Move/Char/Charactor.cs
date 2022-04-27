@@ -12,6 +12,9 @@ public class Charactor : MonoBehaviour
     private int m_nWidth;
 
     [SerializeField]
+    private float m_fSpeed = 1f;
+
+    [SerializeField]
     private float m_fMoveRangeGap;
     private float m_fLeftMaxRange;
     private float m_fRightMaxRange;
@@ -94,7 +97,7 @@ public class Charactor : MonoBehaviour
         if (m_bDirection == false) destPosition = m_vLeftPosition;
         else destPosition = m_vRightPosition;
 
-        if (!m_Move2DComp.Run(destPosition, 1f,5f))
+        if (!m_Move2DComp.Run(destPosition, m_fSpeed, 5f))
         {
             m_Move2DComp.SetAgoDistance(1e5f);
             m_bDirection = !m_bDirection;

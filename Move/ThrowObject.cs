@@ -20,8 +20,10 @@ public class ThrowObject : MonoBehaviour, Throw
     private float m_fThrowTime;
     private float m_fRemainThrowTime;
 
+    private bool m_bInit = false;
     private Vector3 m_vDir = new Vector3(0, 1, 0);
     private Vector3 m_vTargetPosition;
+    private Vector3 m_vTargetDir;
 
     private Move2D m_Move2d;
 
@@ -49,24 +51,37 @@ public class ThrowObject : MonoBehaviour, Throw
 
     private void OnEnable()
     {
+        if (m_bInit == true)
+        {
+            m_fRemainThrowTime = m_fThrowTime;
+            m_vTargetPosition = m_TargetObject.transform.position;
+            float fAngle = Module.GetAngle(m_vDir, m_vTargetPosition);
+            transform.Rotate(new Vector3(0, 0, fAngle));
+            m_vTargetDir = (m_TargetObject.transform.position - transform.position).normalized;
+        }
+    }
+    private void Start()
+    {
+        m_bInit = true;
         m_fRemainThrowTime = m_fThrowTime;
         m_vTargetPosition = m_TargetObject.transform.position;
         float fAngle = Module.GetAngle(m_vDir, m_vTargetPosition);
         transform.Rotate(new Vector3(0, 0, fAngle));
+        m_vTargetDir = (m_TargetObject.transform.position - transform.position).normalized; 
     }
 
     // Update is called once per frame
     void Update()
     {
         m_fRemainThrowTime -= Time.deltaTime;
-        m_Move2d.RunRigid(m_vTargetPosition, m_fSpeed);
+        m_Move2d.RunRigidDir(m_vTargetDir, m_fSpeed);
         if (m_fRemainThrowTime <= 0f) gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject == m_TargetObject)
-        {
+        {        
             gameObject.SetActive(false);
             // 데미지를 준다.
         }

@@ -8,6 +8,9 @@ public class DirMove : MonoBehaviour
     private int m_nWidth;
 
     [SerializeField]
+    private float m_fSpeed = 1f;
+
+    [SerializeField]
     private bool m_bDir;
 
     [SerializeField]
@@ -70,7 +73,7 @@ public class DirMove : MonoBehaviour
         if (m_bDirection == false)  destPosition = m_vDirPositionA;
         else                        destPosition = m_vDirPositionB;
 
-        if (!m_Move2DComp.Run(destPosition, 1f, 5f))
+        if (!m_Move2DComp.Run(destPosition, m_fSpeed, 5f))
         {
             m_Move2DComp.SetAgoDistance(1e5f);
             m_bDirection = !m_bDirection;

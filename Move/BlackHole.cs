@@ -32,7 +32,7 @@ public class BlackHole : MonoBehaviour
             if (fDistance <= m_fDistance)
             {
                 Vector3 vDir = (transform.position - m_ObSuckedUpArray[i].transform.position).normalized * m_fSuckUpPower;
-
+                vDir = new Vector3(vDir.x, vDir.y, 0);
                 if (m_bInOutSide == true) vDir = -vDir; // 바깥쪽으로 밀어낸다. 
 
                 m_ObSuckedUpArray[i].transform.position += vDir;

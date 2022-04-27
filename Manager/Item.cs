@@ -10,6 +10,9 @@ public class Item : MonoBehaviour
     [SerializeField]
     private int m_nEx;              // 경험치
 
+    [SerializeField]
+    private bool m_bAd = false;
+
     private bool m_bPicked;
 
     private float m_fPickedDistance = 4f;
@@ -48,7 +51,7 @@ public class Item : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             if (m_nItemType <= 4)       PlayerOffline2D.instance.AddEx(m_nEx);
-            else if (m_nItemType <= 9)  GameUIManager.instance.GetTreasureBox(m_nItemType - 5);
+            else if (m_nItemType <= 9)  GameUIManager.instance.GetTreasureBox(m_nItemType - 5, m_bAd);
             gameObject.SetActive(false);
             // 아이템 매니저에서 관리함.
         }
