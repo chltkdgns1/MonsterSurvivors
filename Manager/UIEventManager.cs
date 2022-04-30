@@ -32,8 +32,16 @@ public class UIEventManager
         m_startFuncDown[13] = ExitGameExit;
         m_startFuncDown[20] = UnPrintSkillStatus;
 
+        m_startFuncDown[21] = PrintResultDlg;
+
         m_startFuncDown[100] = ClickAccessStop;
         m_startFuncDown[0] = LoadScene;
+    }
+
+    static public void PrintResultDlg(CommunicationTypeDataClass value)
+    {
+        GameUIManager.instance.SetActiveEndGame(true);
+        GameUIManager.instance.PrintDeadQuestion(false);
     }
 
     static public void ClickAccessStop(CommunicationTypeDataClass value)

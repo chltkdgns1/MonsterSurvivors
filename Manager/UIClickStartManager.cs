@@ -35,6 +35,7 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
         m_startFunc[18] = SetApplySkill;
         m_startFunc[19] = PrintSkillStatus;
         m_startFunc[20] = UnPrintSkillStatus;
+        m_startFunc[21] = PrintResultDlg;
 
         m_startFunc[199] = TestCode;
 
@@ -164,6 +165,12 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
     {
         PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
         GameUIManager.instance.SetActiveSkillStatus(false);
+    }
+
+    static public void PrintResultDlg(CommunicationTypeDataClass value)
+    {
+        GameUIManager.instance.SetActiveEndGame(true);
+        GameUIManager.instance.PrintDeadQuestion(false);
     }
 
     static public void TestCode(CommunicationTypeDataClass value)

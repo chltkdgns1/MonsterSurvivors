@@ -6,15 +6,16 @@ public interface Throw
 {
     void SetTargetObject(GameObject Ob);
     void SetThrowTime(float fTime);
-    float GetDamage();
 }
 
 
-public class ThrowObject : MonoBehaviour, Throw
+public class ThrowObject : MonoBehaviour, Throw , DamageInterface
 {
 
     [SerializeField]
-    private float m_fDamage;
+    private int m_nMinDamage;
+    [SerializeField]
+    private int m_nMaxDamage;
 
     private GameObject m_TargetObject;
     private float m_fThrowTime;
@@ -42,11 +43,6 @@ public class ThrowObject : MonoBehaviour, Throw
     public void SetTargetObject(GameObject Ob)
     {
         m_TargetObject = Ob;
-    }
-
-    public float GetDamage()
-    {
-        return m_fDamage;
     }
 
     private void OnEnable()
@@ -87,7 +83,14 @@ public class ThrowObject : MonoBehaviour, Throw
         }
     }
 
+    public void SetDamage(int nMin, int nMax)
+    {
+        m_nMinDamage = nMin;
+        m_nMaxDamage = nMax;
+    }
 
-
-
+    public int GetDamage()
+    {
+        return UnityEngine.Random.Range(m_nMinDamage, m_nMaxDamage);
+    }
 }

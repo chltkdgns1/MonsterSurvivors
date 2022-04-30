@@ -14,6 +14,7 @@ public class DamageText : MonoBehaviour
     private bool m_fInitEnd;
 
     private RectTransform m_Rect;
+    private string m_sColor;
 
     // Start is called before the first frame update
 
@@ -38,10 +39,11 @@ public class DamageText : MonoBehaviour
         StartCoroutine(PrintText());
     }
 
-    public void SetDamage(int nDamage)
+    public void SetDamage(int nDamage, string sColor)
     {
         damage = nDamage;
         m_fInitEnd = true;
+        m_sColor = sColor;
     }
 
     IEnumerator PrintText()
@@ -63,12 +65,12 @@ public class DamageText : MonoBehaviour
             {
                 fFontSz += Time.deltaTime * 40;
                 //Debug.Log("fFontSz : " + fFontSz);
-                text.text = "<color=white><size=" + fFontSz.ToString() + ">" + damage.ToString() + "</size></color>";
+                text.text = "<color="+ m_sColor + "><size=" + fFontSz.ToString() + ">" + damage.ToString() + "</size></color>";
             }
             else
             {
                 fFontSz -= Time.deltaTime * 40;
-                text.text = "<color=white><size=" + fFontSz.ToString() + ">" + damage.ToString() + "</size></color>";
+                text.text = "<color=" + m_sColor + "><size=" + fFontSz.ToString() + " > " + damage.ToString() + "</size></color>";
             }
             yield return null;
         }

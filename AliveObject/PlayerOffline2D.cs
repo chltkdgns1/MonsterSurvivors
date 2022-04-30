@@ -84,11 +84,14 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
     private long m_lDamageTime;
 
+    private int m_nKillMonster;
+
     private void Awake()
     {
         if (instance == null)   instance = this;
         else                    Destroy(gameObject);
 
+        m_nKillMonster = 0;
         FirstStartInit();
         SetBool();
         initValue();
@@ -468,12 +471,14 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         if (collision.CompareTag("Monster"))
         {
             m_lDamageTime = DateTime.Now.Ticks;
-            DamagedMonster();
+            DamageInterface temp = collision.GetComponent<DamageInterface>();
+            DamagedMonster(temp);
         }
 
         if (collision.CompareTag("ThrowAttack"))
         {
-            DamagedMonster();
+            DamageInterface temp = collision.GetComponent<DamageInterface>();
+            DamagedMonster(temp);
         }
 
         //Damage temp = other.GetComponent<Damage>();
@@ -495,19 +500,27 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
             if (DateTime.Now.Ticks - m_lDamageTime >= 1000000)
             {
                 m_lDamageTime = DateTime.Now.Ticks;
-                DamagedMonster();
+                DamageInterface temp = collision.GetComponent<DamageInterface>();
+                DamagedMonster(temp);
             }
         }
     }
 
-    void DamagedMonster()
+    void DamagedMonster(DamageInterface dDamageInter)
     {
+        int nDamage = 1;
+        if (dDamageInter != null) nDamage = dDamageInter.GetDamage();
+
         m_Renderer.material.color = Color.black;
         Color temp = m_Renderer.material.color;
         temp.a = 0.8f;
         m_Renderer.material.color = temp;
-        bool bRes = GetDamage(1);
-        if (bRes) return;
+        bool bRes = GetDamage(nDamage);
+        if (bRes)
+        {
+            //DamageTextManager.instance.SetDamageText(transform.position, nDamage, "red");
+            return;
+        }
         StartCoroutine(CheckEndGame());
     }
 
@@ -536,8 +549,18 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     {
         gameObject.SetActive(false);
         HpBar.instance.ChangeActive(m_nHpKey, false);
-        string[] param = { "StartScene", "0", "PlayGameLobbyMove", "2" };
-        UIClickStartManager.LoadScene(new CommunicationTypeDataClass(0, null, param));
+
+        GameUIManager.instance.SetGameOverFunc(() =>
+        {
+            GameUIManager.instance.SetActiveEndGame(true);
+            GameUIManager.instance.SetActiveGameOver(false);
+        });
+        GameUIManager.instance.SetActiveGameOver(true);
+
+        //GameUIManager.instance.SetActiveEndGame(true);
+
+        //string[] param = { "StartScene", "0", "PlayGameLobbyMove", "2" };
+        //UIClickStartManager.LoadScene(new CommunicationTypeDataClass(0, null, param));
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -603,4 +626,10 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         m_nRemainHp = Mathf.Min(m_nRemainHp, m_nMaxHp);
         HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
     }
+
+    public int GetKillMonster() { return m_nKillMonster; }
+    public void AddKillMonster() { m_nKillMonster++; }
 }
+
+// 딱 한번만 초기화되어야하는 변수
+// 여러번 초기화하는 변수

@@ -7,7 +7,7 @@ public class Move2D : MonoBehaviour
     // Start is called before the first frame update
     // Start is called before the first frame update
 
-    private Rigidbody2D m_2DRigidbody;
+    private Rigidbody2D m_2DRigidbody = null;
 
     private float m_fAgoDistance;   // 이전 거리
 
@@ -20,10 +20,11 @@ public class Move2D : MonoBehaviour
     {
         m_fAgoDistance = 1e5f;
         m_targetPosition = transform.position;
+        m_2DRigidbody = GetComponent<Rigidbody2D>();
     }
     void Start()
     {
-        m_2DRigidbody = GetComponent<Rigidbody2D>();
+        //m_2DRigidbody = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -93,7 +94,7 @@ public class Move2D : MonoBehaviour
             
             else
             {
-                Vector2 temp = (targetPos - transform.position).normalized;
+                Vector2 temp = (targetPos - transform.position).normalized;              
                 m_2DRigidbody.MovePosition(m_2DRigidbody.position + temp * speed * Time.deltaTime);
             }
             return true;

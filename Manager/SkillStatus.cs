@@ -11,6 +11,8 @@ public class SkillStatus : MonoBehaviour
     private List<Text> m_TextValueList = new List<Text>();
     private List<Text> m_TextNameList = new List<Text>();
     private Image m_ImageSkillImage;
+    [SerializeField]
+    private bool m_bIsResult = false;
     private void Awake()
     {
 
@@ -58,6 +60,19 @@ public class SkillStatus : MonoBehaviour
         m_TextNameList[0].text = value.m_sSkillActive;
         m_TextNameList[1].text = value.m_sSkillName;
 
+        if(m_bIsResult == true)
+        {
+            m_TextValueList[0].text = GetDamageText((int)value.m_fDamageValue);
+            m_TextValueList[1].text = GetPercentText((int)(value.m_fCoolTimeValue * 100));
+            m_TextValueList[2].text = GetPercentText((int)(value.m_fSizeUpValue * 100));
+            m_TextValueList[3].text = GetDamageSumText(value.m_fSumDamage); 
+            m_TextValueList[4].text = GetPercentText((int)(value.m_fNuckbackValue * 100));
+            m_TextValueList[5].text = GetPercentText(value.m_fBloodValue * 100);
+            m_TextValueList[6].text = GetCountText(value.m_nSkillCnt);
+            m_TextValueList[7].text = GetDamageSumText(value.m_fDPS); 
+            return;
+        }
+
         m_TextValueList[0].text = GetDamageText((int)value.m_fDamageValue);
         m_TextValueList[1].text = GetPercentText((int)(value.m_fCoolTimeValue  * 100));
         m_TextValueList[2].text = GetPercentText((int)(value.m_fSizeUpValue    * 100));
@@ -96,6 +111,14 @@ public class SkillStatus : MonoBehaviour
         if (value >= 30)    return "<color=#64FF64>"    + value + "</color>";
         if (value >= 15)    return "<color=#6464FF>"    + value + "</color>";
                             return "<color=white>"      + value + "</color>";
+    }
+
+    string GetDamageSumText(float value)
+    {
+        if(value >= 1e9)    return "<color=#FF6464>"    + (value * 0.000000001f).ToString("F1") + "G" + "</color>";
+        if(value >= 1e6)    return "<color=#64FF64>"    + (value * 0.000001f).ToString("F1") + "M" + "</color>";
+        if(value >= 1e3)    return "<color=#6464FF>"    + (value * 0.001f).ToString("F1") + "K" + "</color>";
+                            return "<color=white>"      + value.ToString("F1") + "</color>";
     }
 
     // Update is called once per frame

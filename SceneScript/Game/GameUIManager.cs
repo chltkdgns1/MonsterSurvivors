@@ -11,7 +11,7 @@ public class GameUIManager : MonoBehaviour
     private GameObject      m_obGoHomeLoading;
     private GameObject      m_obDeadQuestion;
     private GameObject      m_obRestartScreen;
-    private GameObject      m_obTimeSetEndGame;
+    private GameObject      m_obEndGame;
     private Text            m_obRestartText;
     private GameObject      m_obTouchPad;
     private GameObject      m_obTouchCircle;
@@ -87,7 +87,7 @@ public class GameUIManager : MonoBehaviour
         m_obGetTreasureBox          = GameObject.Find("TreasureBox");
         m_obSkillStatus             = GameObject.Find("SkillStatus");
         m_obGameOver                = GameObject.Find("GameOver");
-
+        m_obEndGame                 = GameObject.Find("EndGame");
 
         m_TextLevelText.text        = "1 Lv";
         m_TextLevelPercent.text     = "0 %";
@@ -125,7 +125,9 @@ public class GameUIManager : MonoBehaviour
 
         if(TimeSetEndGame() == true)
         {
-
+            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+            GameUIManager.instance.SetActiveEndGame(true);
+            GameUIManager.instance.PrintDeadQuestion(false);
         }
     }
 
@@ -139,10 +141,15 @@ public class GameUIManager : MonoBehaviour
 
     void SetTimeText()
     {
+        m_TextTime.text = GetTimeText();
+    }
+
+    string GetTimeText()
+    {
         int nTime = (int)m_fTime;
         int nMinute = nTime / 60;
         int nSecond = nTime % 60;
-        m_TextTime.text = GetTimeNum(nMinute) + ":" + GetTimeNum(nSecond);
+        return GetTimeNum(nMinute) + ":" + GetTimeNum(nSecond); 
     }
 
     void SetLevel()
@@ -175,6 +182,7 @@ public class GameUIManager : MonoBehaviour
         if(m_obGetTreasureBox       != null)    m_obGetTreasureBox.SetActive    (false);
         if(m_obSkillStatus          != null)    m_obSkillStatus.SetActive       (false);
         if(m_obGameOver             != null)    m_obGameOver.SetActive          (false);
+        if(m_obEndGame              != null)    m_obEndGame.SetActive           (false);
 
         if (m_obRestartScreen != null)
         {
@@ -195,6 +203,11 @@ public class GameUIManager : MonoBehaviour
     {
         m_obGameOver.SetActive(flag);
         m_obDeadQuestion.SetActive(flag);
+    }
+
+    public void SetActiveGameOver(bool flag)
+    {
+        m_obGameOver.SetActive(flag);
     }
 
     public void SetActivePauseBackScreen(bool flag)
@@ -227,6 +240,17 @@ public class GameUIManager : MonoBehaviour
     public void SetActiveLevelUp(bool flag)
     {
         m_obLevelUp.SetActive(flag);
+    }
+
+    public void SetActiveEndGame(bool flag)
+    {
+        m_obEndGame.SetActive(flag);
+    }
+
+    public void SetGameOverFunc(CallBackFunc func)
+    {
+        GameOverUIManager temp = m_obGameOver.GetComponent<GameOverUIManager>();
+        if(temp != null) temp.SetFunc(func);      
     }
 
     public void SetActiveTouchPad(bool flag)
@@ -363,7 +387,10 @@ public class GameUIManager : MonoBehaviour
         TreasureBoxManager.instance.OpenBoxAdd(nLevel);
     }
 
-
+    public float GetTime()
+    {
+        return m_fTime;
+    }
 
     public void SetActiveTreasureBox(bool flag)
     {

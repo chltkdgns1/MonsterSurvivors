@@ -31,11 +31,11 @@ public class DamageTextManager : MonoBehaviour
         }
     }
 
-    public void SetDamageText(Vector3 vPosition,int nPrintDamage)
+    public void SetDamageText(Vector3 vPosition,int nPrintDamage, string sColor = "white")
     {
         m_ObTextList[m_nCur].transform.position = Camera.main.WorldToScreenPoint(vPosition + new Vector3(0, 0.5f));
         m_ObTextList[m_nCur].SetActive(true);
-        m_ObTextList[m_nCur].GetComponent<DamageText>().SetDamage(nPrintDamage);
+        m_ObTextList[m_nCur].GetComponent<DamageText>().SetDamage(nPrintDamage, sColor);
         m_nCur++; m_nCur %= 1000;
     }
 }

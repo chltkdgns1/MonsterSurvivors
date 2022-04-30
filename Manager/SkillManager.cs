@@ -72,7 +72,12 @@ public class SkillManager : MonoBehaviour
 
         public float                m_fBloodPercent     = 0;
 
-        public int                 m_nFollowOption      = 0;
+        public int                  m_nFollowOption      = 0;
+
+        public float                m_fSumDamage;
+        public float                m_fMaxDPS;
+        public float                m_fDPS;
+
         // 나중에 Skill SetInit 에 추가해야함. 귀찮아서 지금은 추가 안함.
 
         public List<SkillStruct>    m_SkillStruct = new List<SkillStruct>();
@@ -107,6 +112,10 @@ public class SkillManager : MonoBehaviour
             m_fBloodPercent         = fBlood;
 
             m_nFollowOption         = nFollow;
+
+            m_fSumDamage            = 0f;
+            m_fMaxDPS               = 0f;
+            m_fDPS                  = 0f;
 
             for (int i = 0; i < nCnt; i++)                  // 새로운 스킬 생성하면서, 새로운 스킬이 동시에 nCnt 개 만큼 존재함.
             {
@@ -239,10 +248,17 @@ public class SkillManager : MonoBehaviour
                 }
             }
         }
+
+        public void SetMaxDPS()
+        {
+            m_fMaxDPS = Mathf.Max(m_fMaxDPS, m_fDPS);
+            m_fDPS = 0f;
+        }
     }
 
     private List<SkillData> m_SkillData = new List<SkillData>();        // 각각 다른 스킬들의 모음 인덱스 : 0 , 인덱스 : 1 은 다른 스킬임
-    
+
+    private float m_fSecondTimeCheck = 0f;
 
     private bool m_bFirst = false;
 
@@ -250,6 +266,8 @@ public class SkillManager : MonoBehaviour
     {
         if (instance == null)   instance = this;
         else                    Destroy(gameObject);
+
+        m_fSecondTimeCheck = 0f;
     }
 
     void Start()
@@ -274,7 +292,8 @@ public class SkillManager : MonoBehaviour
         string sActivate = OptionManager.instance.GetSkillActive(m_SkillData[index].m_nSkillKey) ? "액티브" : "패시브";
         return new SkillStatusStruct(
             m_SkillData[index].m_nSkillKey,         m_SkillData[index].m_fMaxDamage,        m_SkillData[index].m_fCoolTimePercent,  m_SkillData[index].m_fLocalSizePercent,
-            m_SkillData[index].m_fNuckBackPercent,  m_SkillData[index].m_fBloodPercent,     m_SkillData[index].m_nCnt,              sActivate,                              sSkillName);
+            m_SkillData[index].m_fNuckBackPercent,  m_SkillData[index].m_fBloodPercent,     m_SkillData[index].m_nCnt,              sActivate,                              sSkillName,
+            m_SkillData[index].m_fSumDamage,        m_SkillData[index].m_fMaxDPS);
     }
 
     public int GetSkillStatusDataCnt()
@@ -289,10 +308,21 @@ public class SkillManager : MonoBehaviour
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
         if (m_bFirst == false) { m_bFirst = true; RandFirstSkill(); return; }
         if (IsPossibleUseSkill() == false) return;
+        SetMaxDPS();
         UseSkill();
     }
 
-    bool IsPossibleUseSkill()
+    private void SetMaxDPS()
+    {
+        m_fSecondTimeCheck += Time.deltaTime;
+        if (m_fSecondTimeCheck < 1f) return;
+
+        int sz = m_SkillData.Count;
+        for (int i = 0; i < sz; i++) m_SkillData[i].SetMaxDPS();
+        m_fSecondTimeCheck = 0f;
+    }
+
+    private bool IsPossibleUseSkill()
     {
         return PlayerOffline2D.instance.IsPossibleUse();
     }
@@ -315,6 +345,12 @@ public class SkillManager : MonoBehaviour
     public float GetNuckBack(int index)
     {
         return m_SkillData[index].m_fNuckBackPercent;
+    }
+
+    public void SetDamageSum(int index, float fDamage)
+    {
+        m_SkillData[index].m_fSumDamage += fDamage;
+        m_SkillData[index].m_fDPS += fDamage;
     }
 
     void UseSkill()
@@ -461,5 +497,13 @@ public class SkillManager : MonoBehaviour
             //else if ((int)temp % 2 == 0)                                        fValue = Random.Range(0.01f, 0.05f);
             //else                                                                fValue = Random.Range(1, 5);
         }
+    }
+
+    public float GetAllSumDamage()
+    {
+        int sz = m_SkillData.Count;
+        float fSum = 0;
+        for(int i = 0; i< sz; i++) fSum += m_SkillData[i].m_fSumDamage;      
+        return fSum;
     }
 }

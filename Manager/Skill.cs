@@ -112,5 +112,10 @@ public class Skill : MonoBehaviour
         return SkillManager.instance.GetNuckBack(m_nSkillManagerIndex);
     }
 
+    public void SetDamageSum(float fDamage)
+    {
+        SkillManager.instance.SetDamageSum(m_nSkillManagerIndex, fDamage);
+    }
+
 
 }

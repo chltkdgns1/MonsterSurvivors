@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void CallBackFunc();
+
 public class GameOverUIManager : MonoBehaviour
 {
+
+
     [SerializeField]
     private GameObject[] m_ObGameOver;
     private List<Vector2> m_vNormalPosition = new List<Vector2>();
@@ -14,6 +18,9 @@ public class GameOverUIManager : MonoBehaviour
     private bool m_bEnd = false;
     float m_fheightRatio = Screen.height / 1080.0f;
     float m_fwidthRatio = Screen.width / 1920.0f;
+
+    private CallBackFunc m_Func = null;
+ 
     [SerializeField]
     private float m_fSpeed = 1f;
     private void Awake()
@@ -31,6 +38,11 @@ public class GameOverUIManager : MonoBehaviour
             m_Move2DList.Add(m_ObGameOver[i].GetComponent<Move2D>());
             m_ObGameOver[i].SetActive(false);
         }
+    }
+
+    public void SetFunc(CallBackFunc func)
+    {
+        m_Func = func;
     }
 
     private void OnEnable()
@@ -58,6 +70,14 @@ public class GameOverUIManager : MonoBehaviour
             m_ObGameOver[m_nMoveIndex].transform.position = m_vNormalPosition[m_nMoveIndex];
             m_nMoveIndex++;
         }
-        if (m_nMoveIndex == m_ObGameOver.Length) m_bEnd = true;              
+        if (m_nMoveIndex == m_ObGameOver.Length)
+        {
+            m_bEnd = true;
+            if (m_Func != null)
+            {
+                m_Func();
+                m_Func = null;
+            }
+        }
     }
 }

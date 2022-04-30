@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-public class Monster : MonoBehaviour, MonsterInterface
+
+public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
 {
 
     [SerializeField]
@@ -23,6 +24,8 @@ public class Monster : MonoBehaviour, MonsterInterface
     private int m_nMinEx;
     [SerializeField]
     private int m_nMaxDamage;
+    [SerializeField]
+    private int m_nMinDamage;
     [SerializeField]
     private float m_fSpeed;
     [SerializeField]
@@ -201,6 +204,7 @@ public class Monster : MonoBehaviour, MonsterInterface
         float nDamage = temp.GetDamage();
         m_nHp -= (int)nDamage;
 
+        temp.SetDamageSum(nDamage);
         PlayerOffline2D.instance.SetPlusHp(nDamage* temp.GetBlood());     
         DamageTextManager.instance.SetDamageText(transform.position, (int)temp.GetDamage());
 
@@ -211,6 +215,7 @@ public class Monster : MonoBehaviour, MonsterInterface
             initAnim();
             m_Anim.SetBool(m_sRun, true);
             m_Renderer.material.color = Color.white;
+            PlayerOffline2D.instance.AddKillMonster();
             MonsterManager.instance.DeadMonster(m_nKey, m_nEx, m_nBox);
             //StartCoroutine(DeadMotion());
         }
@@ -240,6 +245,7 @@ public class Monster : MonoBehaviour, MonsterInterface
         m_Renderer.material.color = Color.white;
         MonsterManager.instance.DeadMonster(m_nKey, m_nEx, m_nBox);
     }
+
     IEnumerator CollisionMotion(float fNuckBack)
     {
         if (m_bDamage) yield break;
@@ -274,4 +280,15 @@ public class Monster : MonoBehaviour, MonsterInterface
     }
 
     public bool GetCloserRange() { return m_bCloseRangeMonster; }
+
+    public void SetDamage(int nMin, int nMax)
+    {
+        m_nMinDamage = nMin;
+        m_nMaxDamage = nMax;
+    }
+
+    public int GetDamage()
+    {
+        return UnityEngine.Random.Range(m_nMinDamage, m_nMaxDamage);
+    }
 }
