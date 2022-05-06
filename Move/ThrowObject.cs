@@ -70,7 +70,7 @@ public class ThrowObject : MonoBehaviour, Throw , DamageInterface
     void Update()
     {
         m_fRemainThrowTime -= Time.deltaTime;
-        m_Move2d.RunRigidDir(m_vTargetDir, m_fSpeed);
+        m_Move2d.RunRigidDir(m_vTargetDir);
         if (m_fRemainThrowTime <= 0f) gameObject.SetActive(false);
     }
 

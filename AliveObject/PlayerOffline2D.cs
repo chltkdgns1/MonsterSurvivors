@@ -19,11 +19,6 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     private Move2D      m_obMove;
     private Animator    m_obAnim;
 
-    //private UseSkill    m_CompUseSkill;
-
-    [SerializeField]
-    private float m_fSpeed;
-
     /// <summary>
     /// 애니메이션 옵션
     /// </summary>
@@ -54,12 +49,6 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     [SerializeField]
     private string m_sDeadObject;
 
-    [SerializeField]
-    private float m_nMaxHp            ;
-    private float m_nRemainHp         ;
-
-    private int m_nHpKey            = -1;
-
     private bool m_bCharLeftRight   = false;      // false Left , true Right
     private bool m_bDownUp          = false;             // false Down,  true Up   
 
@@ -85,6 +74,8 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     private long m_lDamageTime;
 
     private int m_nKillMonster;
+
+    private Hp m_Hp;
 
     private void Awake()
     {
@@ -112,6 +103,7 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
         m_obMove    = GetComponent<Move2D>();
         m_obAnim    = GetComponent<Animator>();
+        m_Hp        = GetComponent<Hp>();
 
         string back = "Back";
 
@@ -131,9 +123,6 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         m_fDamageMotionTime         = 0f;
         m_fDeadMotionTime           = 0f;
         m_fNoEnemyTime              = 0f;
-
-        m_nMaxHp                    = 100;
-        m_nRemainHp                 = 100;
 
         m_bFirst                    = false;
         m_Renderer.material.color   = Color.white;
@@ -237,29 +226,37 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         m_obAnim.SetBool(m_sDash,               false);
         m_obAnim.SetBool(m_sBackDash,           false);
 
-        HpBar.instance.ChangePosition(m_nHpKey, transform.position);
+        m_Hp.MoveHpBar(transform.position);
+        //HpBar.instance.ChangePosition(m_nHpKey, transform.position);
     }
 
     void SetGameOver()
     {
         gameObject.SetActive(false);
         initValue();
-        HpBar.instance.ChangeActive(m_nHpKey, false);
+        m_Hp.SetActive(false);
+        //HpBar.instance.ChangeActive(m_nHpKey, false);
     }
 
     public void SetRestart()
     {
-        GameUIManager.instance.SetRestart(0);
+        GameValueManager.instance.SetRestart(0);
         GameUIManager.instance.PrintDeadQuestion(false);
         gameObject.SetActive(true);
 
         initValue();
 
-        HpBar.instance.ChangeActive(m_nHpKey, true);
-        HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
+        m_Hp.SetActive(true);
+        m_Hp.ChangeRemainHp();
         m_targetPosition = transform.position;
-        HpBar.instance.ChangePosition(m_nHpKey, transform.position);
+        m_Hp.MoveHpBar(transform.position);
         GameUIManager.instance.RestartGameTimer();
+
+        //HpBar.instance.ChangeActive(m_nHpKey, true);
+        //HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
+        //m_targetPosition = transform.position;
+        //HpBar.instance.ChangePosition(m_nHpKey, transform.position);
+       // GameUIManager.instance.RestartGameTimer();
 
         m_Renderer.material.color   = Color.black;
         Color temp                  = m_Renderer.material.color;
@@ -305,9 +302,9 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         GameTouchManager.instance.RegisterEvent(this);
         GameTouchManager.instance.RegisterEvent(this);
         CameraManager.instance.Register(gameObject);
-        m_nRemainHp = m_nMaxHp;
-        m_nHpKey = HpBar.instance.AddObject(transform.position, (int)m_nMaxHp, (int)m_nRemainHp,0,0.7f);
-        HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
+       // m_nRemainHp = m_nMaxHp;
+       // m_nHpKey = HpBar.instance.AddObject(transform.position, (int)m_nMaxHp, (int)m_nRemainHp,0,0.7f);
+       // HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
     }
 
     void DeadUpdate()
@@ -358,9 +355,10 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
     void Move()
     {
-        if (m_bClicked && m_obMove.Run(m_targetPosition,m_fSpeed))
+        if (m_bClicked && m_obMove.Run(m_targetPosition))
         {
-            HpBar.instance.ChangePosition(m_nHpKey, transform.position);                                               // 애니메이션 isMove
+            m_Hp.MoveHpBar(transform.position);
+            //HpBar.instance.ChangePosition(m_nHpKey, transform.position);                                               // 애니메이션 isMove
         }
         else
         {
@@ -386,7 +384,8 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
         if (m_bFirst == false)
         {
-            HpBar.instance.ChangePosition(m_nHpKey, transform.position);
+            m_Hp.MoveHpBar(transform.position);
+            //HpBar.instance.ChangePosition(m_nHpKey, transform.position);
             m_bFirst = true;
         }
 
@@ -419,8 +418,7 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
     public bool IsReceiveDamage() { return m_bRecieveDamage; }
 
-    public Move2D GetMove()                 {   return m_obMove;    }
-    public int GetHpKey()                   {   return m_nHpKey;    }
+    public Move2D GetMove()                 {   return m_obMove;    } 
     public GameObject GetGameObject()       { return gameObject; }
 
     public GameObject GetNearestObject()
@@ -431,13 +429,12 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
     bool GetDamage(int nDamage)
     {
-        m_nRemainHp -= nDamage;
+        m_Hp.SetDamage((float)nDamage);
+        m_Hp.ChangeRemainHp();
 
-        if (m_nRemainHp < 0) m_nRemainHp = 0;
+        //HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
 
-        HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
-
-        if (m_nRemainHp > 0)
+        if (m_Hp.GetRemainHp() > 0f)
         {
             m_targetPosition = transform.position;
 
@@ -535,7 +532,7 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
         //Debug.Log("GameUIManager.instance.GetRestart(): " + GameUIManager.instance.GetRestart());
 
-        if (GameUIManager.instance.GetRestart() == DefineManager.PLAYING_MIN_CONTINUE_COUNT)
+        if (GameValueManager.instance.GetRestart() == DefineManager.PLAYING_MIN_CONTINUE_COUNT)
         {
             ExitGame();
             yield break;
@@ -548,7 +545,9 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     public void ExitGame()
     {
         gameObject.SetActive(false);
-        HpBar.instance.ChangeActive(m_nHpKey, false);
+
+        m_Hp.SetActive(false);
+        //HpBar.instance.ChangeActive(m_nHpKey, false);
 
         GameUIManager.instance.SetGameOverFunc(() =>
         {
@@ -621,10 +620,8 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
 
     public void SetPlusHp(float fPlusHp)
     {
-        Debug.Log("Plus Hp : " + fPlusHp);
-        m_nRemainHp += fPlusHp;
-        m_nRemainHp = Mathf.Min(m_nRemainHp, m_nMaxHp);
-        HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_nRemainHp);
+        m_Hp.SetPlusHp(fPlusHp);
+        m_Hp.ChangeRemainHp();
     }
 
     public int GetKillMonster() { return m_nKillMonster; }

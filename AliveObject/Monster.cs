@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
+public class Monster : MonoBehaviour, MonsterInterface, DamageInterface
 {
 
     [SerializeField]
@@ -26,8 +26,6 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
     private int m_nMaxDamage;
     [SerializeField]
     private int m_nMinDamage;
-    [SerializeField]
-    private float m_fSpeed;
     [SerializeField]
     private int m_nMinBox;
     [SerializeField]
@@ -68,7 +66,22 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
     private long m_lNuckBackTime;
 
     private Rigidbody2D m_Rigidbody2D;
+    
+    // 5분 내외 움직임
+    [SerializeField]
+    private float m_fMovingTime = 2f;
+    private float m_fRemainMoveTime;
 
+    [SerializeField]
+    private float m_fTargetDistance = 5f;  // 플레이어가 일정 간격 안으로 진입하면 따라간다. 
+
+    private Vector3 m_vDir;
+
+    private bool m_bTargetMove = false;
+    private bool m_bTargetOn = false;       // 타겟이 정해지면, 정해진 시간만큼은 따라간다.
+    private float m_fFixedTargetFollowTime = 10f;
+    private float m_fRemainTargetFollowTime;
+    
     private void Awake()
     {
         init();
@@ -106,6 +119,7 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
     {
         m_bDeath = false;
         m_bDamage = false;
+        m_bTargetOn = false;
     }
 
     void Update()
@@ -114,29 +128,84 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
         if (m_nKey == -1) return;               // 키 값이 정해지지 않았다면, 게임이 초기화가 안료가 안된 것임.
-        SetNearestPlayerDistance(m_bDeath);
-        if (m_bDeath == true) return;
-        if (m_bDamage == true) return;
-        SetDir();
 
-        if (m_bCloseRangeMonster)                                                                           // 원거리 몬스터일 경우에는
+        SetNearestPlayerDistance(m_bDeath);
+
+        if (m_bDeath    == true) return;
+        if (m_bDamage   == true) return;
+
+        Move();
+    }
+
+    void Move()
+    {
+        if (!m_bTargetOn && !m_bTargetMove && !GetTargetDistance()) // 한 번 다가오면 10초 동안 따라나니는 flag , 5분 지나면 켜지는 flag, 가까워지면 켜지는 flag
         {
-            if (m_fFarRangeDistance <= Vector2.Distance(m_ObPlayer.transform.position, transform.position)) // 정해진 거리만 접근하고
-            {
-                m_Move2D.RunRigid(m_ObPlayer.transform.position, m_fSpeed);                                 // 정해진 거리 밖에 있다면 이동 가능
-            }
+            SetDir((transform.position + m_vDir).x);
+            MoveRand();                                 // 시작 5분 동안, 플레이어가 몬스터의 일정 반경 안으로 들어오지 않는다면.
         }
         else
         {
-            m_Move2D.RunRigid(m_ObPlayer.transform.position, m_fSpeed);
+            SetTargetOn();
+            SetDir(m_ObPlayer.transform.position.x);
+            MoveNormal();
         }
+    }
+
+    void SetTargetOn()
+    {
+        if (!m_bTargetOn)
+        {
+            m_bTargetOn = true;
+            m_fRemainTargetFollowTime = m_fFixedTargetFollowTime;
+        }
+
+        if (m_bTargetOn)
+        {
+            m_fRemainTargetFollowTime -= Time.deltaTime;
+        }
+
+        if (m_fRemainTargetFollowTime <= 0f) m_bTargetOn = false;
+    }
+
+    void MoveNormal()
+    {
+        if (m_bCloseRangeMonster)                                                                           // 원거리 몬스터일 경우에는
+        {
+            if (m_fFarRangeDistance <= Vector2.Distance(m_ObPlayer.transform.position, transform.position)) // 정해진 거리만 접근하고
+                m_Move2D.RunRigid(m_ObPlayer.transform.position);                                 // 정해진 거리 밖에 있다면 이동 가능       
+        }
+        else m_Move2D.RunRigid(m_ObPlayer.transform.position);
+       
+    }
+
+    void MoveRand()
+    {
+        m_fRemainMoveTime -= Time.deltaTime;
+        if (m_fRemainMoveTime <= 0f)
+        {
+            RandomPosition();
+            m_fRemainMoveTime = m_fMovingTime;
+        }
+        m_Move2D.RunRigidDir(m_vDir);
+    }
+
+    bool GetTargetDistance()
+    {
+        float fDis = Vector2.Distance(PlayerOffline2D.instance.gameObject.transform.position, transform.position);
+        return m_fTargetDistance >= fDis;
     }
 
     public void RandomAbility()
     {
         m_nHp               = UnityEngine.Random.Range(m_nMinHp, m_nMaxHp);
         m_nEx               = UnityEngine.Random.Range(m_nMinEx, m_nMaxEx);
-        m_nBox              = UnityEngine.Random.Range(m_nMinBox, m_nMaxBox);
+
+        int nRandNum = UnityEngine.Random.Range(0, 100);
+
+        m_nBox = -1;
+        if (nRandNum < 30) m_nBox = UnityEngine.Random.Range(m_nMinBox, m_nMaxBox);
+
         m_nDamage           = 1;
         m_bDeath            = false;
         m_lNuckBackTime     = 0;
@@ -156,10 +225,10 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
 
     }
 
-    void SetDir()
+    void SetDir(float fXpos)
     {
         if (m_bUseDir == false) return;
-        float xpos = transform.position.x - m_ObPlayer.transform.position.x;
+        float xpos = transform.position.x - fXpos;
         bool flag = xpos <= 0 ? true : false;
         if (m_bMirror) flag = !flag;
         Module.ChangeDirection(gameObject, flag);
@@ -206,7 +275,7 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
 
         temp.SetDamageSum(nDamage);
         PlayerOffline2D.instance.SetPlusHp(nDamage* temp.GetBlood());     
-        DamageTextManager.instance.SetDamageText(transform.position, (int)temp.GetDamage());
+        PrintTextManager.instance.SetText(transform.position, temp.GetDamage().ToString());
 
         if (m_nHp <= 0)
         {
@@ -291,4 +360,11 @@ public class Monster : MonoBehaviour, MonsterInterface , DamageInterface
     {
         return UnityEngine.Random.Range(m_nMinDamage, m_nMaxDamage);
     }
+
+    void RandomPosition()
+    {
+        m_vDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), 0);
+    }
+
+    public void SetTargetMove(bool flag) { m_bTargetMove = flag; }
 }

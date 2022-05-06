@@ -16,6 +16,9 @@ public class Move2D : MonoBehaviour
     [SerializeField]
     private bool m_fMoveVersion = false;
 
+    [SerializeField]
+    private float m_fSpeed;
+
     private void Awake()
     {
         m_fAgoDistance = 1e5f;
@@ -70,12 +73,12 @@ public class Move2D : MonoBehaviour
     //    return false;
     //}
 
-    public void RunRigidDir(Vector2 vTargetNomalize, float speed)
+    public void RunRigidDir(Vector2 vTargetNomalize)
     {
-        m_2DRigidbody.MovePosition(m_2DRigidbody.position + vTargetNomalize * speed * Time.deltaTime);
+        m_2DRigidbody.MovePosition(m_2DRigidbody.position + vTargetNomalize * m_fSpeed * Time.deltaTime);
     }
 
-    public bool RunRigid(Vector3 targetPos, float speed, float fMargin = 0.0001f)
+    public bool RunRigid(Vector3 targetPos, float fMargin = 0.0001f)
     {
         targetPos = new Vector3(targetPos.x, targetPos.y, transform.position.z);
         float dis = Vector3.Distance(transform.position, targetPos);
@@ -90,12 +93,12 @@ public class Move2D : MonoBehaviour
         if (dis >= fMargin) // 차이가 아직 있다면
         {
             if (m_fMoveVersion == false)
-                transform.Translate((targetPos - transform.position) * speed * Time.deltaTime); // 목적지와 가까워 질 수록 이동량이 많거나 적어짐.
+                transform.Translate((targetPos - transform.position) * m_fSpeed * Time.deltaTime); // 목적지와 가까워 질 수록 이동량이 많거나 적어짐.
             
             else
             {
                 Vector2 temp = (targetPos - transform.position).normalized;              
-                m_2DRigidbody.MovePosition(m_2DRigidbody.position + temp * speed * Time.deltaTime);
+                m_2DRigidbody.MovePosition(m_2DRigidbody.position + temp * m_fSpeed * Time.deltaTime);
             }
             return true;
         }
@@ -103,7 +106,7 @@ public class Move2D : MonoBehaviour
     }
 
 
-    public bool Run(Vector3 targetPos, float speed, float fMargin = 0.0001f)
+    public bool Run(Vector3 targetPos, float fMargin = 0.0001f)
     {
         targetPos = new Vector3(targetPos.x, targetPos.y, transform.position.z);
         float dis = Vector3.Distance(transform.position, targetPos);
@@ -118,12 +121,12 @@ public class Move2D : MonoBehaviour
         if (dis >= fMargin) // 차이가 아직 있다면
         {
             if (m_fMoveVersion == false)
-                transform.Translate((targetPos - transform.position) * speed * Time.deltaTime);
+                transform.Translate((targetPos - transform.position) * m_fSpeed * Time.deltaTime);
             
             else
             {
                 Vector3 temp = (targetPos - transform.position).normalized;
-                transform.position += temp * speed * Time.deltaTime;
+                transform.position += temp * m_fSpeed * Time.deltaTime;
             }
             return true;
         }

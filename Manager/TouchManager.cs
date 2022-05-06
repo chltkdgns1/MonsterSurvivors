@@ -76,7 +76,7 @@ public class TouchManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        //if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
 
         if (Input.touchCount > 0)                           // 터치가 입력되었을 경우
         {

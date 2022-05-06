@@ -42,10 +42,21 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
     // Update is called once per frame
     public void OnFirstTouch(Vector3 touchPoint)
     {
+
+        int nState = PlayingGameManager.GetGameState();
+
+        if (nState == DefineManager.PLAYING_STATE_PAUSE) return;
+
+        if (nState == DefineManager.PLAYING_STATE_BUILD_STRUCT) // 건물을 생성할 때는 조작이 조금 다름.
+        {
+            return;
+        }
+
         m_vFirstPosition = touchPoint;
         GameUIManager.instance.SetActiveTouchPad(true);
         GameUIManager.instance.SetPositionTouchPad(touchPoint);
         GameUIManager.instance.SetPositionTouchCircle(touchPoint);
+
     }
 
 
@@ -71,8 +82,20 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
 
     public void OnFirstTouchDrag(Vector3 touchPoint)
     {
+        int nState = PlayingGameManager.GetGameState();
+
+        if (nState == DefineManager.PLAYING_STATE_PAUSE) return;
+
         //Debug.LogError(">??드레그한다고?");
         // 서클 내부에 있는 원이 움직임. 
+
+
+        if(nState == DefineManager.PLAYING_STATE_BUILD_STRUCT)
+        {
+
+            return;
+        }
+
         float distance = Vector3.Distance(touchPoint, m_vFirstPosition);
 
         if (distance < m_fTouchPadRad)
@@ -91,12 +114,16 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
 
     public void OnOtherTouch(List<TouchCircle> touchPoint)
     {
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+
         int sz = m_touchList.Count;
         for (int i = 0; i < sz; i++) m_touchList[i].OnSkill(touchPoint);
     }
 
     public void OnFirstTouchEnd()
     {
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+
         if (m_bMouseUseState) return;
         GameUIManager.instance.SetActiveTouchPad(false);
         SendStopPosition();
@@ -104,6 +131,8 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
 
     public void OnClick(Vector3 clickPosition)
     {
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+
         m_bMouseUseState = true;
         m_vFirstPosition = clickPosition;
         GameUIManager.instance.SetActiveTouchPad(true);
@@ -113,6 +142,8 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
 
     public void OnClickMove(Vector3 clickPosition)
     {
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+
         float distance = Vector3.Distance(clickPosition, m_vFirstPosition);
 
         if (distance < m_fTouchPadRad)
@@ -131,6 +162,8 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
 
     public void OnClickUp(Vector3 clickPosition)
     {
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+
         m_bMouseUseState = false;
         GameUIManager.instance.SetActiveTouchPad(false);
         SendStopPosition();

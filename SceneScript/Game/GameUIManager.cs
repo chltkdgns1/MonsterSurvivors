@@ -28,6 +28,10 @@ public class GameUIManager : MonoBehaviour
     private Text            m_TextLevelText;
     [SerializeField]
     private Text            m_TextTime;
+    [SerializeField]
+    private Text            m_TextMoney;
+    [SerializeField]
+    private GameObject       m_ObTextMoney;
 
     private GameObject  []  m_obSkillTouch;
     private GameObject  []  m_obSkillCoolTouch;
@@ -36,14 +40,10 @@ public class GameUIManager : MonoBehaviour
     private float       []  m_nSkillCoolTime;
     private bool        []  m_nCoolTimeManage;
 
-    private int             m_nRestart;
-
     private Transform       m_canvasTransform;
     private float           m_fCanvasHeight;
     private float           m_fCanvasWidth;
     private Vector3         m_vCalibValue;
-
-    private float           m_fTime;
 
     // ½ºÅ³
     [SerializeField]
@@ -93,22 +93,19 @@ public class GameUIManager : MonoBehaviour
         m_TextLevelPercent.text     = "0 %";
         m_ImageLevelGage.fillAmount = 0f;
         m_TextTime.text             = "00:00";
+        SetMoneyText("0");
     }
 
   
     void Init()
     {
-         m_nRestart              = DefineManager.PLAYING_MAX_CONTINUE_COUNT;
- 
         if (m_obTouchPad != null) m_obTouchCircle = m_obTouchPad.transform.GetChild(0).gameObject;
   
         SetActive();
 
         m_fCanvasWidth          = m_canvasTransform.GetComponent<RectTransform>().rect.width;
         m_fCanvasHeight         = m_canvasTransform.GetComponent<RectTransform>().rect.height;
-        m_vCalibValue           = new Vector3(m_fCanvasWidth / 2, m_fCanvasHeight / 2);
-
-        m_fTime                 = 0f;
+        m_vCalibValue           = new Vector3(m_fCanvasWidth / 2, m_fCanvasHeight / 2);     
     }
 
     private void Start()
@@ -119,37 +116,25 @@ public class GameUIManager : MonoBehaviour
     private void Update()
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-        m_fTime += Time.deltaTime;
+
         SetTimeText();
         SetLevel();
-
-        if(TimeSetEndGame() == true)
-        {
-            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
-            GameUIManager.instance.SetActiveEndGame(true);
-            GameUIManager.instance.PrintDeadQuestion(false);
-        }
+        TimeEndGame();
     }
 
-
-    bool TimeSetEndGame()
+    void TimeEndGame()
     {
-        int nSecond = (int)m_fTime;
-        if (nSecond >= 1800) return true;
-        return false;
+        if (PlayTimeManager.instance.IsTimeEnd() == true)
+        {
+            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+            SetActiveEndGame(true);
+            PrintDeadQuestion(false);
+        }
     }
 
     void SetTimeText()
     {
-        m_TextTime.text = GetTimeText();
-    }
-
-    string GetTimeText()
-    {
-        int nTime = (int)m_fTime;
-        int nMinute = nTime / 60;
-        int nSecond = nTime % 60;
-        return GetTimeNum(nMinute) + ":" + GetTimeNum(nSecond); 
+        m_TextTime.text = PlayTimeManager.instance.GetTimeText();
     }
 
     void SetLevel()
@@ -166,10 +151,6 @@ public class GameUIManager : MonoBehaviour
     {
         m_TextLevelPercent.text = "100 %";
         m_ImageLevelGage.fillAmount = 1f;
-    }
-    string GetTimeNum(int num)
-    {
-        return num >= 10 ? num.ToString() : "0" + num;
     }
 
     void SetActive()
@@ -197,8 +178,6 @@ public class GameUIManager : MonoBehaviour
         m_obSkillStatus.SetActive(flag);
     }
 
-    public void SetRestart(int value)   { m_nRestart = value; }
-    public int  GetRestart()             { return m_nRestart; }
     public void PrintDeadQuestion(bool flag)
     {
         m_obGameOver.SetActive(flag);
@@ -387,13 +366,18 @@ public class GameUIManager : MonoBehaviour
         TreasureBoxManager.instance.OpenBoxAdd(nLevel);
     }
 
-    public float GetTime()
-    {
-        return m_fTime;
-    }
-
     public void SetActiveTreasureBox(bool flag)
     {
         m_obGetTreasureBox.SetActive(flag);
+    }
+
+    public void SetMoneyText(string sText)
+    {
+        Module.GetMoneyString(ref sText);
+        m_TextMoney.text = sText;
+    }
+
+    public Vector3 GetMoneyTextPosition() {
+        return m_ObTextMoney.transform.position;
     }
 }

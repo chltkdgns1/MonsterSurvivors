@@ -36,6 +36,7 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
         m_startFunc[19] = PrintSkillStatus;
         m_startFunc[20] = UnPrintSkillStatus;
         m_startFunc[21] = PrintResultDlg;
+        m_startFunc[22] = CreateStructure;
 
         m_startFunc[199] = TestCode;
 
@@ -171,6 +172,12 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
     {
         GameUIManager.instance.SetActiveEndGame(true);
         GameUIManager.instance.PrintDeadQuestion(false);
+    }
+
+    static public void CreateStructure(CommunicationTypeDataClass value)
+    {
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        GameUIManager.instance.SetActiveSkillStatus(true);
     }
 
     static public void TestCode(CommunicationTypeDataClass value)

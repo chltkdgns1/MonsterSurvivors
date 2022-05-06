@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DamageText : MonoBehaviour
+public class PrintText : MonoBehaviour
 {
     private float moveSpeed;
     private float alphaSpeed;
     private float destroyTime;
     Text text;
     Color alpha;
-    private int damage;
+    private string sPrintText;
     private bool m_fInitEnd;
 
     private RectTransform m_Rect;
     private string m_sColor;
+
+    [SerializeField]
+    private float m_fFontSize = 40f;
 
     // Start is called before the first frame update
 
@@ -36,21 +39,21 @@ public class DamageText : MonoBehaviour
 
         text = GetComponent<Text>();
         m_fInitEnd = false;
-        StartCoroutine(PrintText());
+        StartCoroutine(PrintTextRoutine());
     }
 
-    public void SetDamage(int nDamage, string sColor)
+    public void SetText(string sPrint, string sColor)
     {
-        damage = nDamage;
+        sPrintText = sPrint;
         m_fInitEnd = true;
         m_sColor = sColor;
     }
 
-    IEnumerator PrintText()
+    IEnumerator PrintTextRoutine()
     {
         while (m_fInitEnd == false) yield return null;
 
-        float fFontSz = 40f;
+        float fFontSz = m_fFontSize;
         float fTime = 0f;
         while(fTime <= 0.8f)
         {
@@ -63,14 +66,14 @@ public class DamageText : MonoBehaviour
 
             if (fTime <= 0.4f)
             {
-                fFontSz += Time.deltaTime * 40;
+                fFontSz += Time.deltaTime * m_fFontSize;
                 //Debug.Log("fFontSz : " + fFontSz);
-                text.text = "<color="+ m_sColor + "><size=" + fFontSz.ToString() + ">" + damage.ToString() + "</size></color>";
+                text.text = "<color="+ m_sColor + "><size=" + fFontSz.ToString() + ">" + sPrintText + "</size></color>";
             }
             else
             {
-                fFontSz -= Time.deltaTime * 40;
-                text.text = "<color=" + m_sColor + "><size=" + fFontSz.ToString() + " > " + damage.ToString() + "</size></color>";
+                fFontSz -= Time.deltaTime * m_fFontSize;
+                text.text = "<color=" + m_sColor + "><size=" + fFontSz.ToString() + " > " + sPrintText + "</size></color>";
             }
             yield return null;
         }

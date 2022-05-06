@@ -21,8 +21,6 @@ public class GameOverUIManager : MonoBehaviour
 
     private CallBackFunc m_Func = null;
  
-    [SerializeField]
-    private float m_fSpeed = 1f;
     private void Awake()
     {
         m_fheightRatio = Screen.height / 1080.0f;
@@ -65,7 +63,7 @@ public class GameOverUIManager : MonoBehaviour
         Move2D tempMove = m_Move2DList[m_nMoveIndex];
         if (tempMove == null) return;
 
-        if (tempMove.Run(m_vNormalPosition[m_nMoveIndex], m_fSpeed) == false)
+        if (tempMove.Run(m_vNormalPosition[m_nMoveIndex]) == false)
         {
             m_ObGameOver[m_nMoveIndex].transform.position = m_vNormalPosition[m_nMoveIndex];
             m_nMoveIndex++;

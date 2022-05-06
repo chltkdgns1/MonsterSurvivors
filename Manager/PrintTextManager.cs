@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageTextManager : MonoBehaviour
+public class PrintTextManager : MonoBehaviour
 {
-    static public DamageTextManager instance = null;
+    static public PrintTextManager instance = null;
     private List<GameObject> m_ObTextList = new List<GameObject>();
     private int m_nCur;
 
@@ -31,11 +31,12 @@ public class DamageTextManager : MonoBehaviour
         }
     }
 
-    public void SetDamageText(Vector3 vPosition,int nPrintDamage, string sColor = "white")
+    public void SetText(Vector3 vPosition, string sPrint, bool flag = false, string sColor = "white")
     {
-        m_ObTextList[m_nCur].transform.position = Camera.main.WorldToScreenPoint(vPosition + new Vector3(0, 0.5f));
+        if (!flag) m_ObTextList[m_nCur].transform.position = Camera.main.WorldToScreenPoint(vPosition + new Vector3(0, 0.5f));
+        else m_ObTextList[m_nCur].transform.position = vPosition;
         m_ObTextList[m_nCur].SetActive(true);
-        m_ObTextList[m_nCur].GetComponent<DamageText>().SetDamage(nPrintDamage, sColor);
+        m_ObTextList[m_nCur].GetComponent<PrintText>().SetText(sPrint, sColor);
         m_nCur++; m_nCur %= 1000;
     }
 }

@@ -68,6 +68,9 @@ public class MonsterManager : MonoBehaviour
                 ThrowAttack tempThrowAttck = tempOb.GetComponent<ThrowAttack>();
                 if (tempThrowAttck != null) tempThrowAttck.InitThrow(PlayerOffline2D.instance.gameObject);           
             }
+
+            tempMonster.SetTargetMove(PlayTimeManager.instance.IsInitialTimeEnd());
+            // 생성될 몬스터도 적용.
         }
 
         tempComp.SetKey(m_nKey++);
@@ -85,6 +88,12 @@ public class MonsterManager : MonoBehaviour
     {
         if(nBox != -1)   ItemManager.instance.CreateBox(nBox, m_ObMonster[nKey].transform.position);
         else             ItemManager.instance.CreateJewel(nEx, m_ObMonster[nKey].transform.position);
+
+        int nRandNum = UnityEngine.Random.Range(0, 100);
+        if (nRandNum < 50) return; 
+
+        Vector3 vRandPosition = new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f));
+        ItemManager.instance.CreateMoney(nEx, m_ObMonster[nKey].transform.position + vRandPosition);
     }
     
 
@@ -100,6 +109,10 @@ public class MonsterManager : MonoBehaviour
     void Start()
     {
         InitMonster();
+        PlayTimeManager.instance.SetTimer(PlayTimeManager.instance.GetInitialTime(), () =>
+         {
+             for (int i = 0; i < m_ObMonster.Count; i++) m_ObMonster[i].GetComponent<Monster>().SetTargetMove(true);
+         });
     }
 
     // Update is called once per frame

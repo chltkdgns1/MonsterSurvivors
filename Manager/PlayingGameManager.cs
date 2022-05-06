@@ -27,8 +27,7 @@ public class PlayingGameManager
             m_nGameCntStopState--;
             if(m_nGameCntStopState == 0) m_nGameSate = state;
             if(m_nGameCntStopState < 0)
-                Debug.LogError("static public void SetGameState(int state) State Error : " + m_nGameCntStopState);
-            
+                Debug.LogError("static public void SetGameState(int state) State Error : " + m_nGameCntStopState);      
         }
         else if(state == DefineManager.PLAYING_STATE_PAUSE)
         {

@@ -73,7 +73,7 @@ public class DirMove : MonoBehaviour
         if (m_bDirection == false)  destPosition = m_vDirPositionA;
         else                        destPosition = m_vDirPositionB;
 
-        if (!m_Move2DComp.Run(destPosition, m_fSpeed, 5f))
+        if (!m_Move2DComp.Run(destPosition, 5f))
         {
             m_Move2DComp.SetAgoDistance(1e5f);
             m_bDirection = !m_bDirection;

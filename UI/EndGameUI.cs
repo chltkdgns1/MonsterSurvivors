@@ -29,10 +29,10 @@ public class EndGameUI : MonoBehaviour
 
     string GetTimeText()
     {
-        int nTime = (int)GameUIManager.instance.GetTime();
+        int nTime = (int)PlayTimeManager.instance.GetTime();
         int nMinute = nTime / 60;
         int nSecond = nTime % 60;
-        string sTime = nMinute + ":" + nSecond;
+        string sTime = Module.GetLengthNumber(nMinute.ToString(), 2) + ":" + Module.GetLengthNumber(nSecond.ToString(), 2);
 
         if (nMinute >= 25) return "<color=#FF6464>" + sTime + "</color>";
         if (nMinute >= 15) return "<color=#64FF64>" + sTime + "</color>";

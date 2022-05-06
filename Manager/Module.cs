@@ -166,4 +166,35 @@ public class Module : MonoBehaviour
         Vector3 vDir        = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1));
         pTransform.position = vPosition + vDir.normalized * UnityEngine.Random.Range(1, Mathf.Max(fDistance, 1));
     }
+
+    static public void GetMoneyString(ref string str)
+    {
+        int sz = str.Length;
+        string sMoneyStr = "";
+        for(int i = sz - 1, cnt = 0; i >= 0; i--,cnt++)
+        {
+            sMoneyStr += str[i];
+            if (cnt == 3) sMoneyStr += ',';
+            cnt %= 3;
+        }
+        GetReverseString(ref sMoneyStr);
+        str = sMoneyStr;
+    }
+
+    static public void GetReverseString(ref string str)
+    {
+        string sReverseStr = "";
+        int sz = str.Length;
+        for (int i = sz - 1; i >= 0; i--) sReverseStr += str[i];
+        str = sReverseStr;
+    }
+
+    static public string GetLengthNumber(string str, int size)
+    {
+        if (str.Length >= size) return str;
+        int diff = size - str.Length;
+        string sAns = "";
+        for (int i = 0; i < diff; i++) sAns += '0';
+        return sAns + str;   
+    }
 }
