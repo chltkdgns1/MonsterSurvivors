@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public struct pair<T, A>
 {
@@ -27,12 +28,12 @@ public class Module : MonoBehaviour
 
     static public Vector3 GetZAxisRandomRatation()
     {
-        return new Vector3(0,0,1) * Random.Range(0, 360);
+        return new Vector3(0,0,1) * UnityEngine.Random.Range(0, 360);
     }
 
     static public Vector3 GetZAxisRandomXYRotation()
     {
-        return new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f)).normalized;
+        return new Vector3(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f)).normalized;
     }
 
     static public float GetAngle(Vector3 vec1, Vector3 vec2)
@@ -196,5 +197,29 @@ public class Module : MonoBehaviour
         string sAns = "";
         for (int i = 0; i < diff; i++) sAns += '0';
         return sAns + str;   
+    }
+
+    static public string GetJsonString(object ob)
+    {
+        return JsonUtility.ToJson(ob);
+    }
+    
+    static public string GetHaxString()
+    {
+        string id = "";
+        int randDomChar = UnityEngine.Random.Range(0, 24);
+        long tempValue = (DateTime.Now.Ticks / 1000);
+        // 알바벳 32 진수로 진행
+
+        while (tempValue > 0)
+        {
+            long binary_32 = tempValue % 32;
+            tempValue /= 32;
+
+            if (binary_32 < 10) id += binary_32.ToString();
+            else id += ((char)('A' + (binary_32 - 10))).ToString();
+
+        }
+        return '#' + id;
     }
 }

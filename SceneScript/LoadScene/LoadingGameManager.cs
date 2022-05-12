@@ -14,6 +14,8 @@ public class LoadingGameManager : MonoBehaviour
     private Text m_txtLoadingPercent;
     [SerializeField]
     private Image m_imgProgress;
+    [SerializeField]
+    private GameObject m_ObLoginSuccess;
 
     private GameObject m_obDisconnect;
     private Text m_obDialMessage;
@@ -81,14 +83,10 @@ public class LoadingGameManager : MonoBehaviour
     {
         yield return null;
 
-        bool bFirst = false;
         AsyncOperation op = SceneManager.LoadSceneAsync(m_sNextScene);
         op.allowSceneActivation = false;
 
         float timer = 0.0f;
-
-        float waitTime = 0.0f;
-
         m_imgProgress.fillAmount = 0.0f;
 
         //while (waitTime < 1.0f)
@@ -103,29 +101,32 @@ public class LoadingGameManager : MonoBehaviour
         //    yield return null;
         //}
 
+        bool bLogPath = false;
+
         while (!op.isDone)
         {
             yield return null;
             timer += Time.deltaTime;
 
-            if(op.progress < 0.9f)
+            if (bLogPath == true)
             {
-                m_imgProgress.fillAmount = Mathf.Lerp(m_imgProgress.fillAmount, op.progress, timer);
-                if (m_imgProgress.fillAmount >= op.progress)
+                if (op.progress > 0.8f)
                 {
-                    timer = 0.0f;
-                }
-            }
-            else
-            {             
-                m_imgProgress.fillAmount = Mathf.Lerp(m_imgProgress.fillAmount, 1f, timer);
-                if (m_imgProgress.fillAmount >= 1.0f && OptionManager.instance.GetAllLoad())
-                {
-                    op.allowSceneActivation = true;
-                    break;
+                    if (m_imgProgress.fillAmount >= 1.0f && OptionManager.instance.GetAllLoad() && GoogleManagers.instance.CheckLoginStateEnd())
+                    {
+                        op.allowSceneActivation = true;
+                        break;
+                    }
                 }
             }
 
+            if (bLogPath == false)
+            {
+                GoogleManagers.instance.StartGoogleLogin();    
+                bLogPath = true;
+            }
+
+            m_imgProgress.fillAmount += Time.deltaTime / 3; 
             int percent = (int)(m_imgProgress.fillAmount * 100f);
             m_txtLoadingPercent.text = percent.ToString() + "%";
         }

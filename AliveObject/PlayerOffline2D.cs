@@ -247,6 +247,7 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         initValue();
 
         m_Hp.SetActive(true);
+        m_Hp.SetMaxHp();
         m_Hp.ChangeRemainHp();
         m_targetPosition = transform.position;
         m_Hp.MoveHpBar(transform.position);
@@ -597,7 +598,7 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
     {
         m_nEx += nEx;
 
-        int maxEx = OptionManager.instance.GetLevelEx(m_nLevel);
+        int maxEx = ValueManager.instance.GetLevelEx(m_nLevel);
         if(m_nEx >= maxEx)
         {
             m_nEx %= maxEx;

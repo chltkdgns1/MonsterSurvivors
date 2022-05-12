@@ -51,8 +51,8 @@ public class SkillStatus : MonoBehaviour
             InitObject();
         }
 
-        int nInSprite = OptionManager.instance.GetSpriteInImage(value.m_nSkillType);
-        string sPath = OptionManager.instance.GetSkillImagePath(value.m_nSkillType);
+        int nInSprite = ValueManager.instance.GetSpriteInImage(value.m_nSkillType);
+        string sPath = ValueManager.instance.GetSkillImagePath(value.m_nSkillType);
 
         if (nInSprite != 0) Module.SetSpriteImageAll(m_ImageSkillImage, sPath, nInSprite);          // 스프라이트 이미지 내에 있는 이미지라면 
         else Module.SetSpriteImage(m_ImageSkillImage, sPath);

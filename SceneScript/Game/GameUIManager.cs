@@ -141,7 +141,7 @@ public class GameUIManager : MonoBehaviour
     {
         int level = PlayerOffline2D.instance.GetLevel();
         m_TextLevelText.text = level + " Lv";
-        int levelMaxEx = OptionManager.instance.GetLevelEx(level);
+        int levelMaxEx = ValueManager.instance.GetLevelEx(level);
         float fPercent = (float)PlayerOffline2D.instance.GetEx() / levelMaxEx;
         m_TextLevelPercent.text = (int)(fPercent * 100) + " %";
         m_ImageLevelGage.fillAmount = fPercent;
@@ -291,15 +291,15 @@ public class GameUIManager : MonoBehaviour
         {
             SkillManager.instance.GetRandSkillStatus(ref nSkill, ref nType, ref fValue);
 
-            int nInSprite   = OptionManager.instance.GetSpriteInImage(nSkill);
-            string sPath    = OptionManager.instance.GetSkillImagePath(nSkill);
+            int nInSprite   = ValueManager.instance.GetSpriteInImage(nSkill);
+            string sPath    = ValueManager.instance.GetSkillImagePath(nSkill);
 
             if (nInSprite != 0) Module.SetSpriteImageAll(m_ImageSkill[i], sPath, nInSprite);          // 스프라이트 이미지 내에 있는 이미지라면 
             else                Module.SetSpriteImage(m_ImageSkill[i], sPath);
 
-            m_TextSkillName[i].text = OptionManager.instance.GetSkillName(nSkill);
+            m_TextSkillName[i].text = ValueManager.instance.GetSkillName(nSkill);
 
-            List<string> templist   = Module.Split(OptionManager.instance.GetSkillComment(nSkill), '.');
+            List<string> templist   = Module.Split(ValueManager.instance.GetSkillComment(nSkill), '.');
             string temp             = Module.MergeString(templist, '.', true);
 
             m_TextSkillComment[i].text = temp;

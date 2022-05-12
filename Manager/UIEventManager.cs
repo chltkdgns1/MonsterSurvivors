@@ -69,15 +69,6 @@ public class UIEventManager
     {
         string[] param = value.GetParameter();
         float time = 0f;
-        ScreenOrientation state = ScreenOrientation.Portrait;
-
-        if (param.Length >= 2)
-        {
-            string sScreen = value.GetParameter()[1];
-            if (sScreen == "LandscapeLeft") state = ScreenOrientation.LandscapeLeft;
-            else if (sScreen == "LandscapeRight") state = ScreenOrientation.LandscapeRight;
-            else if (sScreen == "Portrait") state = ScreenOrientation.Portrait;
-        }
 
         if (param.Length >= 3)
         {

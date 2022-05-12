@@ -88,22 +88,12 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
     static void ReOpenTreasureBoxCallBack(bool flag, string[] param = null)
     {
         if (flag == true) TreasureBoxManager.instance.PrintBox(3);
-        else;
     }
 
     public static void LoadScene(CommunicationTypeDataClass value)
     {
         string[] param = value.GetParameter();
         float time = 0f;
-        ScreenOrientation state = ScreenOrientation.Portrait;
-
-        if (param.Length >= 2)
-        {
-            string sScreen = value.GetParameter()[1];
-            if      (sScreen    == "LandscapeLeft")     state = ScreenOrientation.LandscapeLeft;
-            else if (sScreen    == "LandscapeRight")    state = ScreenOrientation.LandscapeRight;
-            else if (sScreen    == "Portrait")          state = ScreenOrientation.Portrait;
-        }
 
         if(param.Length >= 3)
         {
@@ -182,7 +172,8 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
 
     static public void TestCode(CommunicationTypeDataClass value)
     {
-        GameUIManager.instance.GetTreasureBox(3);
+       
+        //GameUIManager.instance.SetActivePauseBackScreen(true);
         //GameUIManager.instance.GetTreasureBox(3);
         //GameUIManager.instance.PlayerLevelUp();
         //GameUIManager.instance.SetActiveExitPlayGame(true);

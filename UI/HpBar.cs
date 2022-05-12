@@ -15,13 +15,6 @@ public class HpBar : MonoBehaviour
     [SerializeField]
     private GameObject m_ObParent;
 
-    [SerializeField]
-    private float m_fXpos = 0f;
-    [SerializeField]
-    private float m_fYpos = 0.5f;
-    [SerializeField]
-    private float m_fZpos = 0.5f;
-
     class HpBarStruct
     {
         public GameObject m_hpBar;

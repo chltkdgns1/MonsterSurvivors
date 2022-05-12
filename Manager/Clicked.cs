@@ -34,8 +34,6 @@ public class Clicked : MonoBehaviour            // UI 가 클릭되었을 때
 
     private GameObject m_obMine = null;
 
-    private int m_nEndCnt;
-
     private Vector3 m_vClickPosition;
 
     private CommunicationTypeDataClass m_value;
@@ -57,7 +55,6 @@ public class Clicked : MonoBehaviour            // UI 가 클릭되었을 때
             m_obMine = gameObject;
         }
         m_uiObject = GetComponent<Image>();
-        m_nEndCnt = 0;
         m_nClicked = 0;
 
         m_RectTransform = GetComponent<Image>().rectTransform;

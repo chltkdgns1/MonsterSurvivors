@@ -8,9 +8,6 @@ public class DirMove : MonoBehaviour
     private int m_nWidth;
 
     [SerializeField]
-    private float m_fSpeed = 1f;
-
-    [SerializeField]
     private bool m_bDir;
 
     [SerializeField]
