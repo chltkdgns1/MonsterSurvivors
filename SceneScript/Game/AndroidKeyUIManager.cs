@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AndroidKeyUIManager : MonoBehaviour, AndroidKey
+public class AndroidKeyUIManager : MonoBehaviour, IAndroidKey
 {
     public static AndroidKeyUIManager instance = null;
     private bool m_bEscape;

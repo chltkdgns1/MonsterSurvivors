@@ -10,7 +10,7 @@ using System;
 /// Ex)m_targetPosition = transform.position;
 /// </summary>
 
-public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
+public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 {
     static public PlayerOffline2D instance = null;
 
@@ -469,13 +469,13 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
         if (collision.CompareTag("Monster"))
         {
             m_lDamageTime = DateTime.Now.Ticks;
-            DamageInterface temp = collision.GetComponent<DamageInterface>();
+            IDamage temp = collision.GetComponent<IDamage>();
             DamagedMonster(temp);
         }
 
         if (collision.CompareTag("ThrowAttack"))
         {
-            DamageInterface temp = collision.GetComponent<DamageInterface>();
+            IDamage temp = collision.GetComponent<IDamage>();
             DamagedMonster(temp);
         }
 
@@ -498,13 +498,13 @@ public class PlayerOffline2D : MonoBehaviour, TouchGameEvent
             if (DateTime.Now.Ticks - m_lDamageTime >= 1000000)
             {
                 m_lDamageTime = DateTime.Now.Ticks;
-                DamageInterface temp = collision.GetComponent<DamageInterface>();
+                IDamage temp = collision.GetComponent<IDamage>();
                 DamagedMonster(temp);
             }
         }
     }
 
-    void DamagedMonster(DamageInterface dDamageInter)
+    void DamagedMonster(IDamage dDamageInter)
     {
         int nDamage = 1;
         if (dDamageInter != null) nDamage = dDamageInter.GetDamage();

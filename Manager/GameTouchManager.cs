@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInterface
+public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickInterface
 {
     // Start is called before the first frame update
 
@@ -18,11 +18,11 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
     private bool m_bDimension = false;      // false 3d 
     private Vector3 m_vFirstPosition;
 
-    private List<TouchGameEvent> m_touchList = new List<TouchGameEvent>();
+    private List<ITouchGameEvent> m_touchList = new List<ITouchGameEvent>();
 
     private bool m_bMouseUseState = false;
 
-    public void RegisterEvent(TouchGameEvent events)
+    public void RegisterEvent(ITouchGameEvent events)
     {
         m_touchList.Add(events);                        // 해당 터치 데이터에 한해서는 first Position 으로 잡지 않는다.
     }
@@ -56,7 +56,6 @@ public class GameTouchManager : MonoBehaviour, TouchManagerEvent, MouseClickInte
         GameUIManager.instance.SetActiveTouchPad(true);
         GameUIManager.instance.SetPositionTouchPad(touchPoint);
         GameUIManager.instance.SetPositionTouchCircle(touchPoint);
-
     }
 
 

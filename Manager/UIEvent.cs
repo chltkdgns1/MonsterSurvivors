@@ -28,13 +28,7 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
     private void Awake()
     {
         m_obParent = null;
-
-        if (m_bSendObject) // 오브젝트를 보내고 싶다면
-        {
-            //Debug.Log("자신을 보냄");
-            m_obMine = gameObject;
-        }
-
+        if (m_bSendObject)  m_obMine = gameObject;      
         initCommunicateValue();
     }
     void Start()
@@ -47,30 +41,30 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
         m_value = new CommunicationTypeDataClass(m_nId, m_obMine, parameter);
     }
 
+    public void InitCommunicateValue(string []param)
+    {
+        m_value.SetParameter(param);
+    }
+
     public void SetParentEvent(GameObject parent)
     {
         m_obParent = parent;
     }
 
-    // Update is called once per frame
-
     public void OnPointerClick(PointerEventData eventData)
     {
-        //Debug.Log("클릭");
         if ((m_nOption & DefineManager.POINTER_CLICK) != DefineManager.POINTER_CLICK) return;
         UIEventManager.OnClickEvent(m_value);   
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        //Debug.Log("클릭");
         if ((m_nOption & DefineManager.POINTER_UP) != DefineManager.POINTER_UP) return;
         UIEventManager.OnClickUpEvent(m_value);   
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("클릭");
         if ((m_nOption & DefineManager.POINTER_DOWN) != DefineManager.POINTER_DOWN) return;
         UIEventManager.OnClickDownEvent(m_value);  
     }

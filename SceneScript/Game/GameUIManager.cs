@@ -19,6 +19,7 @@ public class GameUIManager : MonoBehaviour
     private GameObject      m_obGetTreasureBox;
     private GameObject      m_obSkillStatus;
     private GameObject      m_obGameOver;
+    private GameObject      m_obCraftingList;
 
     [SerializeField]
     private Image           m_ImageLevelGage;
@@ -88,6 +89,7 @@ public class GameUIManager : MonoBehaviour
         m_obSkillStatus             = GameObject.Find("SkillStatus");
         m_obGameOver                = GameObject.Find("GameOver");
         m_obEndGame                 = GameObject.Find("EndGame");
+        m_obCraftingList            = GameObject.Find("CraftingList");
 
         m_TextLevelText.text        = "1 Lv";
         m_TextLevelPercent.text     = "0 %";
@@ -164,6 +166,7 @@ public class GameUIManager : MonoBehaviour
         if(m_obSkillStatus          != null)    m_obSkillStatus.SetActive       (false);
         if(m_obGameOver             != null)    m_obGameOver.SetActive          (false);
         if(m_obEndGame              != null)    m_obEndGame.SetActive           (false);
+        if (m_obCraftingList        != null)    m_obCraftingList.SetActive      (false);
 
         if (m_obRestartScreen != null)
         {
@@ -235,6 +238,11 @@ public class GameUIManager : MonoBehaviour
     public void SetActiveTouchPad(bool flag)
     {
         m_obTouchPad.SetActive(flag);
+    }
+
+    public void SetActiveCraftingList(bool flag)
+    {
+        m_obCraftingList.SetActive(flag);
     }
 
     public void SetPositionTouchPad(Vector3 Position)

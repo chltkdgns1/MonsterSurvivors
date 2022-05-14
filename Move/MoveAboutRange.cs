@@ -7,12 +7,12 @@ public class MoveAboutRange : MonoBehaviour
     private float[] m_fRange;
     private Vector3 m_vDir;
 
-    private ScoreInterface m_ScoreInter;
+    private IScore m_ScoreInter;
 
     [SerializeField]
     private float m_fSpeed;
 
-    public void MoveStart(float []range, Vector3 Direction, float speed, ScoreInterface scoreInter = null)
+    public void MoveStart(float []range, Vector3 Direction, float speed, IScore scoreInter = null)
     {
         m_vDir = Direction;
 

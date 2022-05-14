@@ -29,7 +29,7 @@ public class TouchManager : MonoBehaviour
 
     //private GameObject cameraObject;
 
-    private List<TouchManagerEvent> m_touchList = new List<TouchManagerEvent>();
+    private List<ITouchManagerEvent> m_touchList = new List<ITouchManagerEvent>();
 
     private int m_nFirstIndex = DefineManager.INIT;
     private Vector3 m_vFirstPosition;
@@ -67,7 +67,7 @@ public class TouchManager : MonoBehaviour
 
     }
 
-    public void RegisterEvent(TouchManagerEvent events)
+    public void RegisterEvent(ITouchManagerEvent events)
     {
         m_touchList.Add(events);                        // 해당 터치 데이터에 한해서는 first Position 으로 잡지 않는다.
     }

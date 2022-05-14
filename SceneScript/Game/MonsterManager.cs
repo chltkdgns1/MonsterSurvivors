@@ -58,7 +58,7 @@ public class MonsterManager : MonoBehaviour
     void CreateMonster(GameObject ObMonster, float fRePrintTime)    // 橇府普 持绢林搁 积己凳.
     {
         GameObject tempOb = Instantiate(ObMonster, ObMonster.transform.position, Quaternion.identity);
-        MonsterInterface tempComp = tempOb.GetComponent<MonsterInterface>();
+        IMonster tempComp = tempOb.GetComponent<IMonster>();
         Monster tempMonster = tempOb.GetComponent<Monster>();
 
         if(tempMonster != null)

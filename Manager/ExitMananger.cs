@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExitMananger : MonoBehaviour,AndroidKey
+public class ExitMananger : MonoBehaviour, IAndroidKey
 {
     private bool m_bEscape;
 

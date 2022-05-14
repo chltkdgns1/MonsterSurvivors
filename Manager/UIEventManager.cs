@@ -33,6 +33,10 @@ public class UIEventManager
         m_startFuncDown[20] = UnPrintSkillStatus;
 
         m_startFuncDown[21] = PrintResultDlg;
+        m_startFuncDown[22] = PrintCraftingList;
+        m_startFuncDown[23] = UnPrintCraftingList;
+
+        m_startFuncDown[24] = CraftSelect;          // 타워 생성 클릭했을 경우
 
         m_startFuncDown[100] = ClickAccessStop;
         m_startFuncDown[0] = LoadScene;
@@ -123,7 +127,6 @@ public class UIEventManager
     static private void ClickedDown(CommunicationTypeDataClass value)
     {
         if (value.GetGameObject() == null) return;
-        //Debug.Log("눌림?");
         Clicked click = value.GetGameObject().GetComponent<Clicked>();
         if (click == null) return;     
         click.MoveSmall();       
@@ -140,5 +143,23 @@ public class UIEventManager
     static private void ExitGameExit(CommunicationTypeDataClass value)
     {
         GameUIManager.instance.SetActiveExitPlayGame(false);
+    }
+
+    static private void PrintCraftingList(CommunicationTypeDataClass value)
+    {
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        GameUIManager.instance.SetActiveCraftingList(true);
+    }
+
+    static private void UnPrintCraftingList(CommunicationTypeDataClass value)
+    {
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        GameUIManager.instance.SetActiveCraftingList(false);
+    }
+
+    static private void CraftSelect(CommunicationTypeDataClass value)
+    {
+        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        GameUIManager.instance.SetActiveCraftingList(false);
     }
 }

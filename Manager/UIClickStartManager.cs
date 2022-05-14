@@ -36,7 +36,7 @@ public class UIClickStartManager            // UI °¡ Å¬¸¯ ÇÑ ÈÄ¿¡ ´ÙÀ½ ½ÇÇà µÉ ½
         m_startFunc[19] = PrintSkillStatus;
         m_startFunc[20] = UnPrintSkillStatus;
         m_startFunc[21] = PrintResultDlg;
-        m_startFunc[22] = CreateStructure;
+        m_startFunc[22] = PrintCraftingList;
 
         m_startFunc[199] = TestCode;
 
@@ -139,7 +139,6 @@ public class UIClickStartManager            // UI °¡ Å¬¸¯ ÇÑ ÈÄ¿¡ ´ÙÀ½ ½ÇÇà µÉ ½
 
     static public void SetApplySkill(CommunicationTypeDataClass value)
     {
-        Debug.Log("abcdefg");
         GameUIManager.instance.SetActiveTreasureBox(false);
         TreasureBoxManager.instance.SetApplySkill(); 
         PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
@@ -164,10 +163,10 @@ public class UIClickStartManager            // UI °¡ Å¬¸¯ ÇÑ ÈÄ¿¡ ´ÙÀ½ ½ÇÇà µÉ ½
         GameUIManager.instance.PrintDeadQuestion(false);
     }
 
-    static public void CreateStructure(CommunicationTypeDataClass value)
+    static public void PrintCraftingList(CommunicationTypeDataClass value)
     {
         PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
-        GameUIManager.instance.SetActiveSkillStatus(true);
+        GameUIManager.instance.SetActiveCraftingList(true);
     }
 
     static public void TestCode(CommunicationTypeDataClass value)

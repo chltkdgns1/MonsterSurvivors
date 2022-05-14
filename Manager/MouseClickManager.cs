@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface MouseClickInterface
+public interface IMouseClickInterface
 {
     void OnClick(Vector3 clickPosition);
 
@@ -13,7 +13,7 @@ public interface MouseClickInterface
 public class MouseClickManager : MonoBehaviour
 {
     static public MouseClickManager instance = null;
-    private List<MouseClickInterface> m_registList = new List<MouseClickInterface>();
+    private List<IMouseClickInterface> m_registList = new List<IMouseClickInterface>();
 
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class MouseClickManager : MonoBehaviour
         
     }
 
-    public void Register(MouseClickInterface regist)
+    public void Register(IMouseClickInterface regist)
     {
         m_registList.Add(regist);
     }

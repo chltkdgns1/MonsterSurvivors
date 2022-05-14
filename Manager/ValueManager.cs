@@ -3,18 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-struct UserData
-{
-    private string m_sNickName;
-    private string m_sUID;
-
-    public string GetUID() { return m_sUID; }
-    public void SetUID(string sUID) { m_sUID = sUID; }
-
-    public string GetNick() { return m_sNickName; }
-    public void SetNick(string sNick) { m_sNickName = sNick; }
-}
-
 public class ValueManager : MonoBehaviour
 {
 

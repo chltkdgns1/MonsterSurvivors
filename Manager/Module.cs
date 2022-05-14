@@ -182,6 +182,21 @@ public class Module : MonoBehaviour
         str = sMoneyStr;
     }
 
+    static public string GetMoneyString(int nMoney)
+    {
+        string str = nMoney.ToString();
+        int sz = str.Length;
+        string sMoneyStr = "";
+        for (int i = sz - 1, cnt = 0; i >= 0; i--, cnt++)
+        {
+            sMoneyStr += str[i];
+            if (cnt == 3) sMoneyStr += ',';
+            cnt %= 3;
+        }
+        GetReverseString(ref sMoneyStr);
+        return sMoneyStr;
+    }
+
     static public void GetReverseString(ref string str)
     {
         string sReverseStr = "";
@@ -221,5 +236,97 @@ public class Module : MonoBehaviour
 
         }
         return '#' + id;
+    }
+
+    static public string GetPercentText(int value)
+    {
+        if (value >= 80) return "<color=#FF6464>" + value + "%</color>";
+        if (value >= 60) return "<color=#64FF64>" + value + "%</color>";
+        if (value >= 30) return "<color=#6464FF>" + value + "%</color>";
+        return "<color=white>" + value + "%</color>";
+    }
+
+    static public string GetPercentText(float value)
+    {
+        if (value >= 80f) return "<color=#FF6464>" + value.ToString("F1") + "%</color>";
+        if (value >= 60f) return "<color=#64FF64>" + value.ToString("F1") + "%</color>";
+        if (value >= 30f) return "<color=#6464FF>" + value.ToString("F1") + "%</color>";
+        return "<color=white>" + value.ToString("F1") + "%</color>";
+    }
+
+    static public string GetCountText(int value)
+    {
+        if (value >= 10) return "<color=#FF6464>" + value + "</color>";
+        if (value >= 7) return "<color=#64FF64>" + value + "</color>";
+        if (value >= 3) return "<color=#6464FF>" + value + "</color>";
+        return "<color=white>" + value + "</color>";
+    }
+
+    static public string GetDamageText(int value)
+    {
+        if (value >= 50) return "<color=#FF6464>" + value + "</color>";
+        if (value >= 30) return "<color=#64FF64>" + value + "</color>";
+        if (value >= 15) return "<color=#6464FF>" + value + "</color>";
+        return "<color=white>" + value + "</color>";
+    }
+
+    static public string GetDamageSumText(float value)
+    {
+        if (value >= 1e9) return "<color=#FF6464>" + (value * 0.000000001f).ToString("F1") + "G" + "</color>";
+        if (value >= 1e6) return "<color=#64FF64>" + (value * 0.000001f).ToString("F1") + "M" + "</color>";
+        if (value >= 1e3) return "<color=#6464FF>" + (value * 0.001f).ToString("F1") + "K" + "</color>";
+        return "<color=white>" + value.ToString("F1") + "</color>";
+    }
+
+    static public string GetTimeText(int nTime)
+    {
+
+        int nMinute = nTime / 60;
+        int nSecond = nTime % 60;
+        string sTime = Module.GetLengthNumber(nMinute.ToString(), 2) + ":" + Module.GetLengthNumber(nSecond.ToString(), 2);
+
+        if (nMinute >= 25) return "<color=#FF6464>" + sTime + "</color>";
+        if (nMinute >= 15) return "<color=#64FF64>" + sTime + "</color>";
+        if (nMinute >= 7) return "<color=#6464FF>" + sTime + "</color>";
+        return "<color=white>" + sTime + "</color>";
+    }
+
+    static public string GetLevelText(int nLevel)
+    {
+        string sLevel = nLevel.ToString();
+
+        if (nLevel >= 80) return "<color=#FF6464>" + sLevel + "</color>";
+        if (nLevel >= 50) return "<color=#64FF64>" + sLevel + "</color>";
+        if (nLevel >= 25) return "<color=#6464FF>" + sLevel + "</color>";
+        return "<color=white>" + sLevel + "</color>";
+    }
+
+
+    static public string GetKillMonsterText(int nKillMonster)
+    {
+        string sKillMonster = nKillMonster.ToString();
+
+        if (nKillMonster >= 10000) return "<color=#FF6464>" + sKillMonster + "</color>";
+        if (nKillMonster >= 1000) return "<color=#64FF64>" + sKillMonster + "</color>";
+        if (nKillMonster >= 250) return "<color=#6464FF>" + sKillMonster + "</color>";
+        return "<color=white>" + sKillMonster + "</color>";
+    }
+
+    static public string GetDamageText(float fDamage)
+    {
+        string sDamage = fDamage.ToString();
+
+        if (fDamage >= 1e9) return "<color=#FF6464>" + (fDamage * 0.000000001f).ToString("F1") + "G" + "</color>";
+        if (fDamage >= 1e6) return "<color=#64FF64>" + (fDamage * 0.000001f).ToString("F1") + "M" + "</color>";
+        if (fDamage >= 1e3) return "<color=#6464FF>" + (fDamage * 0.001f).ToString("F1") + "K" + "</color>";
+        return "<color=white>" + fDamage.ToString("F1") + "</color>";
+    }
+
+    static public string GetHpText(float fHp)
+    {
+        if (fHp >= 50) return "<color=#FF6464>" + fHp + "</color>";
+        if (fHp >= 300) return "<color=#64FF64>" + fHp + "</color>";
+        if (fHp >= 800) return "<color=#6464FF>" + fHp + "</color>";
+        return "<color=white>" + fHp + "</color>";
     }
 }

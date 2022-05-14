@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public interface AndroidKey
+public interface IAndroidKey
 {
     void OnClickHome();
     void OnClickEscape();
@@ -19,7 +19,7 @@ public interface AndroidKey
 public class AndroidKeyManager : MonoBehaviour   // ManagerEvent.cs 참고
 {
     public static AndroidKeyManager instance;
-    public List<AndroidKey> m_obList = new List<AndroidKey>();
+    public List<IAndroidKey> m_obList = new List<IAndroidKey>();
 
     private void Awake()
     {
@@ -27,7 +27,7 @@ public class AndroidKeyManager : MonoBehaviour   // ManagerEvent.cs 참고
         else                    Destroy(gameObject);
     }
 
-    public void RegisterEvent(AndroidKey events)
+    public void RegisterEvent(IAndroidKey events)
     {
         m_obList.Add(events);
     }

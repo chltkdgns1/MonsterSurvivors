@@ -9,7 +9,7 @@ public interface Throw
 }
 
 
-public class ThrowObject : MonoBehaviour, Throw , DamageInterface
+public class ThrowObject : MonoBehaviour, Throw , IDamage
 {
 
     [SerializeField]

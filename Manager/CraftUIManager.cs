@@ -3,59 +3,76 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public struct CraftStruct
-{
-    public int m_nCraftType;
-    public float m_fShieldValue;
-    public float m_fDamageValue;
-    public float m_fNuckbackValue;
-    public float m_fBloodValue;
 
-    public string m_sAdditionalName;
-    public string m_sName;
 
-    public CraftStruct(int nCraftType, float fShieldValue, float fDamageValue, float fNuckbackValue, float fBloodValue,  string sName, string sAddName)
-    {
-        m_nCraftType        = nCraftType;
-        m_fShieldValue      = fShieldValue;
-        m_fDamageValue      = fDamageValue;
-        m_fNuckbackValue    = fNuckbackValue;
-        m_fBloodValue       = fBloodValue;
-
-        m_sName             = sName;
-        m_sAdditionalName   = sAddName;
-
-    }
-}
 
 public class CraftUIManager : MonoBehaviour
 {
  //static public SkillStatusManager instance = null;
 
     [SerializeField]
-    private int m_nCnt = 20;
-
-    [SerializeField]
-    private GameObject m_ObPrefabsCraftUI;
+    private SubArray[] m_ObPrefabsCraftUI;
 
     [SerializeField]
     private GameObject m_ObParent;
 
-    private List<GameObject> m_ObCraftUIList = new List<GameObject>();
+    private List<List<GameObject>> m_ObCraftUIList = new List<List<GameObject>>();
+
+    private int m_nTagState = 0;
 
 
     private void Awake()
     {
-        AddPrefabs();
+        AwakeInit();
     }
 
     void AddPrefabs()
     {
-        for(int i = 0; i < m_nCnt; i++)
+        int nGroupSize = m_ObPrefabsCraftUI.Length;
+        for (int i = 0; i < nGroupSize; i++)
         {
-            m_ObCraftUIList.Add(Instantiate(m_ObPrefabsCraftUI, m_ObParent.transform));
-            m_ObCraftUIList[i].SetActive(false);
+            List<GameObject> tempCraftList = new List<GameObject>();
+            int sz = m_ObPrefabsCraftUI[i].m_subArray.Length;
+
+            for (int k = 0; k < sz; k++)
+            {
+                tempCraftList.Add(Instantiate(m_ObPrefabsCraftUI[i].m_subArray[k], m_ObParent.transform));
+                tempCraftList[k].SetActive(false);
+            }
+            m_ObCraftUIList.Add(tempCraftList);
         }
+    }
+
+    void AwakeInit() // Awake 에서만 초기화
+    {
+        AddPrefabs();
+    }
+
+    void EnableInit() // Enable 되었을 때만 초기화
+    {
+        m_nTagState = 0;
+        PrintGroup();
+    }
+
+    void InitObject()
+    {
+        int nSubSize = m_ObCraftUIList.Count;
+        for (int i = 0; i < nSubSize; i++)
+        {
+            int sz = m_ObCraftUIList[i].Count;
+            for (int k = 0; k < sz; k++)
+                m_ObCraftUIList[i][k].SetActive(false);
+        }
+    }
+
+    void StartInit() // Start 에서만 초기화
+    {
+
+    }
+
+    void ReInit() // 코드 로직 중에 초기화 필요한 경우
+    {
+
     }
 
     void Start()
@@ -65,23 +82,25 @@ public class CraftUIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        for (int i = 0; i < m_nCnt; i++)
-            m_ObCraftUIList[i].SetActive(false);
-
-        //if (SkillManager.instance == null) return;
-
-        //int sz = SkillManager.instance.GetSkillStatusDataCnt();
-        //for(int i = 0; i < sz; i++)
-        //{
-        //    SkillStatusStruct tempStruct = SkillManager.instance.GetSkillStatusData(i);
-        //    m_ObSkillStatusList[i].GetComponent<SkillStatus>().SetData(tempStruct);
-        //    m_ObSkillStatusList[i].SetActive(true);
-        //}
+        EnableInit();
     }
+
+    void PrintGroup()
+    {
+        int nSize = m_ObCraftUIList[m_nTagState].Count;
+        for (int i = 0; i < nSize; i++)
+        {
+            m_ObCraftUIList[m_nTagState][i].SetActive(true);
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
         
     }
+
+    void SetTagState(int nState) { m_nTagState = nState; }
+    int GetTagState() { return m_nTagState; }
 }

@@ -27,7 +27,7 @@ public class FirebaseManager : MonoBehaviour
     private void Awake()
     {
         if (instance == null)   instance = this;
-        else                    DestroyObject(gameObject);
+        else                    Destroy(gameObject);
 
         reference = FirebaseDatabase.DefaultInstance.RootReference;
     }

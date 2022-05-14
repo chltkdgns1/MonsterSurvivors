@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public interface SerializableInterface
+public interface ISerializable
 {
     string GetJsonString();
     void SetJsonToObject(string jsonData);

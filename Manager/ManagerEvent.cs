@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ManagerEvent 
+public interface IManagerEvent 
 {
     void OnMouseMoveEvent(Vector3 mousePoint, Vector3 mouseConvertPosition);
     void OnMouseUpEvent(Vector3 mousePoint, Vector3 mouseConvertPosition);
@@ -10,7 +10,7 @@ public interface ManagerEvent
     // Start is called before the first frame update
 }
 
-public interface TouchManagerEvent
+public interface ITouchManagerEvent
 {
     // 드래그는 first Point 에 한해서만 입력 받음.
     void OnFirstTouch(Vector3 touchPoint);
@@ -19,7 +19,7 @@ public interface TouchManagerEvent
     void OnFirstTouchEnd();
 }
 
-public interface TouchGameEvent
+public interface ITouchGameEvent
 {
     void OnTargetPosition(Vector3 position);
 

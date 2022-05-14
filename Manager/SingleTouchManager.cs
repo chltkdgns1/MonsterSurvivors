@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface SingleTouchInterface
+public interface ISingleTouch
 {
     void OnTouch(Vector3 touchPoint);
     void OnTouchMove(Vector3 touchPoint);
@@ -14,7 +14,7 @@ public class SingleTouchManager : MonoBehaviour
     // Start is called before the first frame update
 
     static public SingleTouchManager instance = null;
-    private List<SingleTouchInterface> m_registList = new List<SingleTouchInterface>();
+    private List<ISingleTouch> m_registList = new List<ISingleTouch>();
 
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class SingleTouchManager : MonoBehaviour
         
     }
 
-    public void Register(SingleTouchInterface regist)
+    public void Register(ISingleTouch regist)
     {
         m_registList.Add(regist);
     }
