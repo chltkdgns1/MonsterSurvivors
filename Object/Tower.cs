@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class Tower : Structure
+public class Tower : Structure 
 {
     [SerializeField]
     private float m_fMinDamage;
@@ -124,22 +124,8 @@ public class Tower : Structure
 
     public void SetEventParam()
     {
-        string[] param = {  m_nTowerType.ToString(), m_fMinDamage.ToString(), m_fMaxDamage.ToString(),
-                            m_fNuckback.ToString(), m_fBlood.ToString(), m_fShootSpeed.ToString()       };
+        string[] param = {  m_nGroupType.ToString(),    m_nTowerType.ToString(),    m_fMinDamage.ToString(),    m_fMaxDamage.ToString(),
+                            m_fNuckback.ToString(),     m_fBlood.ToString(),        m_fShootSpeed.ToString()       };
         m_Event.InitCommunicateValue(param);
     }
-
-    //[SerializeField]
-    //private float m_fMinDamage;
-    //[SerializeField]
-    //private float m_fMaxDamage;
-    //[SerializeField]
-    //private float m_fNuckback;
-    //[SerializeField]
-    //private float m_fBlood;
-    //[SerializeField]
-    //private float m_fShootSpeed;
-
-    //[SerializeField]
-    //private int m_nTowerType;
 }

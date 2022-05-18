@@ -118,6 +118,7 @@ public class GameUIManager : MonoBehaviour
     private void Update()
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         SetTimeText();
         SetLevel();

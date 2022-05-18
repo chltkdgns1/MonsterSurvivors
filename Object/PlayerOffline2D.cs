@@ -372,6 +372,7 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     void FixedUpdate()
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;         // Pause
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY)
         {
@@ -465,6 +466,7 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         if (collision.CompareTag("Monster"))
         {
@@ -492,6 +494,7 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         if (collision.CompareTag("Monster"))
         {

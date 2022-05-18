@@ -129,7 +129,7 @@ public class DefineManager
     public const int PLAYING_STATE_NOMAL = 0;
     public const int PLAYING_STATE_PAUSE = 1;
     public const int PLAYING_STATE_NO_ENEMY = 2;
-    public const int PLAYING_STATE_BUILD_STRUCT = 3;
+    public const int PLAYING_STATE_CRAFTING = 3;
 
     public const int PLAYING_MIN_CONTINUE_COUNT = 0;
     public const int PLAYING_MAX_CONTINUE_COUNT = 1;

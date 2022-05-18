@@ -25,12 +25,12 @@ public class TouchCircle
 public class TouchManager : MonoBehaviour
 {
 
-    static public TouchManager instance = null;
+    static public TouchManager instance                 = null;
+    private List<ITouchManagerEvent> m_touchList        = new List<ITouchManagerEvent>();
+    private List<ITouchCraftManager> m_touchCraftList   = new List<ITouchCraftManager>();
 
-    //private GameObject cameraObject;
-
-    private List<ITouchManagerEvent> m_touchList = new List<ITouchManagerEvent>();
-
+    private List<Vector3> m_touchPositionList               = new List<Vector3>();
+   
     private int m_nFirstIndex = DefineManager.INIT;
     private Vector3 m_vFirstPosition;
 
@@ -72,6 +72,35 @@ public class TouchManager : MonoBehaviour
         m_touchList.Add(events);                        // 해당 터치 데이터에 한해서는 first Position 으로 잡지 않는다.
     }
 
+    public void DeleteEvent(ITouchManagerEvent events)
+    {
+        for (int i = 0; i < m_touchCraftList.Count; i++)
+        {
+            if (m_touchCraftList[i] == events)
+            {
+                m_touchList.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    public void RegisterEvent(ITouchCraftManager events)
+    {
+        m_touchCraftList.Add(events);
+    }
+
+    public void DeleteEvent(ITouchCraftManager events)
+    {
+        for(int i = 0; i < m_touchCraftList.Count; i++)
+        {
+            if(m_touchCraftList[i] == events)
+            {
+                m_touchCraftList.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -96,7 +125,7 @@ public class TouchManager : MonoBehaviour
 
         m_isNotEmptyTouchSkill = false;
 
-        //Debug.Log("cnt : " + cnt);
+        m_touchPositionList.Clear();
 
         for (int i = 0; i < cnt; i++)
         {
@@ -104,12 +133,13 @@ public class TouchManager : MonoBehaviour
             {
                 case TouchPhase.Began       : TouchBegan(i);            break;                  // 터치 시작
                 case TouchPhase.Moved       : TouchMove(i);             break;                  // 터치한 상태에서 움직임.
-                //case TouchPhase.Stationary  :                         break;                  // 터치한 상태에서 움직이지 않음.
+                case TouchPhase.Stationary  : TouchWait(i);             break;                  // 터치한 상태에서 움직이지 않음.
                 case TouchPhase.Ended       : TouchEnd(i);              break;                  // 터치를 뗀 상태
                 case TouchPhase.Canceled    : TouchEnd(i);              break;                  // 터치가 5개 이상 입력되어 추적을 취소함.
             }
         }
         SendOtherTouch();
+        SetCraftTouch();
     }
 
     void SendOtherTouch()
@@ -137,7 +167,6 @@ public class TouchManager : MonoBehaviour
 
     void SendFirstTouch()
     {
-        //Debug.Log("SendFirstTouch() Start");
         if (m_nFirstIndex == DefineManager.INIT) return;
 
         int sz = m_touchList.Count;
@@ -146,7 +175,6 @@ public class TouchManager : MonoBehaviour
 
     void SendFirstMoveTouch()
     {
-        //Debug.Log("SendFirstMoveTouch() Start");
         if (m_nFirstIndex == DefineManager.INIT) return;
 
         int sz = m_touchList.Count;
@@ -155,7 +183,6 @@ public class TouchManager : MonoBehaviour
 
     void SendFirstTouchEnd()
     {
-        //Debug.Log("SendFirstTouchEnd() Start");
         int sz = m_touchList.Count;
         for (int i = 0; i < sz; i++) m_touchList[i].OnFirstTouchEnd();
     }
@@ -173,7 +200,6 @@ public class TouchManager : MonoBehaviour
 
     void TouchBegan(int index)
     {
-        //Debug.Log("TouchBegan(int index) Start");
         if (m_nFirstIndex == DefineManager.INIT)
         {
             if (IsOutCircle(Input.GetTouch(index).position) == true)        // 해당 스킬이나 접근하면 안되는 Circle 내부에 있는게 아니라면, first 터치로 인정함.
@@ -197,7 +223,8 @@ public class TouchManager : MonoBehaviour
 
     void TouchMove(int index)
     {
-        //Debug.Log("void TouchMove(int index) Start");
+        m_touchPositionList.Add(Input.GetTouch(index).position);
+
         if (m_nFirstIndex == index)
         {
             m_vFirstPosition = Input.GetTouch(index).position;
@@ -206,14 +233,33 @@ public class TouchManager : MonoBehaviour
             // 첫 번째 터치 빼고는 움직이고 있는 것을 거른다. 
     }
 
+    void TouchWait(int index)
+    {
+        m_touchPositionList.Add(Input.GetTouch(index).position);
+    }
+
     void TouchEnd(int index)
     {
-        //Debug.Log("void TouchEnd(int index) Start");
         if (m_nFirstIndex == index)
         {
             m_nFirstIndex = -1;
             SendFirstTouchEnd();
         }
+    }
+
+    void SetCraftTouch()
+    {
+        if (m_touchPositionList.Count == 0) return;
+
+        if(m_touchPositionList.Count == 1)
+        {
+            for(int i = 0; i < m_touchCraftList.Count; i++)
+                m_touchCraftList[i].OnOneDrag(m_touchPositionList[0]);
+            return;
+        }
+
+        for (int i = 0; i < m_touchCraftList.Count; i++)
+            m_touchCraftList[i].OnManyDrag(m_touchPositionList);
     }
 }
 

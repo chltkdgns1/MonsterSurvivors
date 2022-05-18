@@ -127,6 +127,7 @@ public class Monster : MonoBehaviour, IMonster, IDamage
         m_Rigidbody2D.velocity = Vector3.zero;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
         if (m_nKey == -1) return;               // 키 값이 정해지지 않았다면, 게임이 초기화가 안료가 안된 것임.
 
         SetNearestPlayerDistance(m_bDeath);
@@ -243,6 +244,7 @@ public class Monster : MonoBehaviour, IMonster, IDamage
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         if (collision.CompareTag("Skill")) 
         {
@@ -255,6 +257,7 @@ public class Monster : MonoBehaviour, IMonster, IDamage
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         if (collision.CompareTag("Skill"))
         {

@@ -42,20 +42,12 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
     // Update is called once per frame
     public void OnFirstTouch(Vector3 touchPoint)
     {
-
         int nState = PlayingGameManager.GetGameState();
-
         if (nState == DefineManager.PLAYING_STATE_PAUSE) return;
-
-        if (nState == DefineManager.PLAYING_STATE_BUILD_STRUCT) // 건물을 생성할 때는 조작이 조금 다름.
-        {
-            return;
-        }
-
+        if (nState == DefineManager.PLAYING_STATE_CRAFTING) return;
+       
         m_vFirstPosition = touchPoint;
-        GameUIManager.instance.SetActiveTouchPad(true);
-        GameUIManager.instance.SetPositionTouchPad(touchPoint);
-        GameUIManager.instance.SetPositionTouchCircle(touchPoint);
+        CreateTouchPad(touchPoint);
     }
 
 
@@ -84,31 +76,9 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
         int nState = PlayingGameManager.GetGameState();
 
         if (nState == DefineManager.PLAYING_STATE_PAUSE) return;
-
-        //Debug.LogError(">??드레그한다고?");
-        // 서클 내부에 있는 원이 움직임. 
-
-
-        if(nState == DefineManager.PLAYING_STATE_BUILD_STRUCT)
-        {
-
-            return;
-        }
-
-        float distance = Vector3.Distance(touchPoint, m_vFirstPosition);
-
-        if (distance < m_fTouchPadRad)
-        {
-            GameUIManager.instance.SetPositionTouchCircle(touchPoint);
-            SendTargetPosition(touchPoint - m_vFirstPosition);
-        }
-        else
-        {
-            float ratio = m_fTouchPadRad / distance;
-            Vector3 nextPosition = m_vFirstPosition + (touchPoint - m_vFirstPosition) * ratio;
-            SendTargetPosition(nextPosition - m_vFirstPosition);
-            GameUIManager.instance.SetPositionTouchCircle(nextPosition);
-        }
+        if (nState == DefineManager.PLAYING_STATE_CRAFTING) return;
+        
+        MoveTouchPad(touchPoint);
     }
 
     public void OnOtherTouch(List<TouchCircle> touchPoint)
@@ -131,32 +101,17 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
     public void OnClick(Vector3 clickPosition)
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
         m_bMouseUseState = true;
         m_vFirstPosition = clickPosition;
-        GameUIManager.instance.SetActiveTouchPad(true);
-        GameUIManager.instance.SetPositionTouchPad(clickPosition);
-        GameUIManager.instance.SetPositionTouchCircle(clickPosition);
+        CreateTouchPad(clickPosition);
     }
 
     public void OnClickMove(Vector3 clickPosition)
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-
-        float distance = Vector3.Distance(clickPosition, m_vFirstPosition);
-
-        if (distance < m_fTouchPadRad)
-        {
-            GameUIManager.instance.SetPositionTouchCircle(clickPosition);
-            SendTargetPosition(clickPosition - m_vFirstPosition);
-        }
-        else
-        {
-            float ratio = m_fTouchPadRad / distance;
-            Vector3 nextPosition = m_vFirstPosition + (clickPosition - m_vFirstPosition) * ratio;
-            SendTargetPosition(nextPosition - m_vFirstPosition);
-            GameUIManager.instance.SetPositionTouchCircle(nextPosition);
-        }
+        MoveTouchPad(clickPosition);
     }
 
     public void OnClickUp(Vector3 clickPosition)
@@ -166,5 +121,30 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
         m_bMouseUseState = false;
         GameUIManager.instance.SetActiveTouchPad(false);
         SendStopPosition();
+    }
+
+    void CreateTouchPad(Vector3 vPosition)
+    {
+        GameUIManager.instance.SetActiveTouchPad(true);
+        GameUIManager.instance.SetPositionTouchPad(vPosition);
+        GameUIManager.instance.SetPositionTouchCircle(vPosition);
+    }
+
+    void MoveTouchPad(Vector3 vPosition)
+    {
+        float distance = Vector3.Distance(vPosition, m_vFirstPosition);
+
+        if (distance < m_fTouchPadRad)
+        {
+            GameUIManager.instance.SetPositionTouchCircle(vPosition);
+            SendTargetPosition(vPosition - m_vFirstPosition);
+        }
+        else
+        {
+            float ratio = m_fTouchPadRad / distance;
+            Vector3 nextPosition = m_vFirstPosition + (vPosition - m_vFirstPosition) * ratio;
+            SendTargetPosition(nextPosition - m_vFirstPosition);
+            GameUIManager.instance.SetPositionTouchCircle(nextPosition);
+        }
     }
 }

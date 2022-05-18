@@ -27,3 +27,11 @@ public interface ITouchGameEvent
 
     void OnSkill(List<TouchCircle> skills);
 }
+
+public interface ITouchCraftManager
+{
+    void OnOneDrag(Vector3 touchPoint);
+    void OnManyDrag(List<Vector3> touchPoint);
+    void RegistTouchEvnet();
+    void DeleteTouchEvent();
+}

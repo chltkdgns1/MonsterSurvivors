@@ -63,8 +63,9 @@ public class Skill : MonoBehaviour
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
 
-        if (m_bInitEnd == false) return;
+            if (m_bInitEnd == false) return;
 
         float fSpeed = SkillManager.instance.GetSpeed(m_nSkillManagerIndex); 
 

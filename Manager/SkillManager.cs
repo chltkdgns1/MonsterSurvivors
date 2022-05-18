@@ -306,6 +306,8 @@ public class SkillManager : MonoBehaviour
     {
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
+
         if (m_bFirst == false) { m_bFirst = true; RandFirstSkill(); return; }
         if (IsPossibleUseSkill() == false) return;
         SetMaxDPS();

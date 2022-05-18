@@ -161,5 +161,7 @@ public class UIEventManager
     {
         PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
         GameUIManager.instance.SetActiveCraftingList(false);
+
+        CraftManager.instance.StartCrafting(value.GetParameter());
     }
 }
