@@ -4,41 +4,43 @@ using UnityEngine;
 
 public class PlayingGameManager 
 {
-    static private int m_nGameSate = DefineManager.PLAYING_STATE_NOMAL;
+
+    static private Stack<DefineManager.GameState> m_stateStack = new Stack<DefineManager.GameState>();
+
     static private bool m_bOnLine = false;
     static private string m_sCharName = "";
-    static private int m_nGameCntStopState = 0;
 
-    static public int GetGameState()
+    static public DefineManager.GameState GetGameState()
     {
-        return m_nGameSate;
+        if (m_stateStack.Count == 0) return DefineManager.GameState.PLAYING_STATE_NOMAL;
+        return m_stateStack.Peek();
     }
 
-    static public void InitGameState()
+    static public void ClearGAmeState()
     {
-        m_nGameCntStopState = 0;
-        m_nGameSate = DefineManager.PLAYING_STATE_NOMAL;
+        m_stateStack.Clear();
     }
 
-    static public void SetGameState(int state)
+    static public void SetGameState(DefineManager.GameState state)
     {
-        if (state == DefineManager.PLAYING_STATE_NOMAL)
+        m_stateStack.Push(state);
+    }
+    
+    static public void SetOutState(DefineManager.GameState state)
+    {
+        if (m_stateStack.Count == 0)
         {
-            m_nGameCntStopState--;
-            if(m_nGameCntStopState == 0) m_nGameSate = state;
-            if(m_nGameCntStopState < 0)
-                Debug.LogError("static public void SetGameState(int state) State Error : " + m_nGameCntStopState);      
+            Debug.LogError("State Stack Is Empty");
+            return;
         }
-        else if(state == DefineManager.PLAYING_STATE_PAUSE)
+
+        if (m_stateStack.Peek() != state)
         {
-            m_nGameCntStopState++;
-            m_nGameSate = state;
+            Debug.LogError("SetOutState is Not Same");
+            return;
         }
-        else
-        {
-            if (m_nGameCntStopState > 0) Debug.LogError("    static public void SetGameState(int state) No Enemy Error : " + m_nGameCntStopState);
-            m_nGameSate = state;
-        }
+
+        m_stateStack.Pop();
     }
 
     static public void SetOnLine(bool flag)

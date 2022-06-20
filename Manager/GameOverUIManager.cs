@@ -6,23 +6,26 @@ public delegate void CallBackFunc();
 
 public class GameOverUIManager : MonoBehaviour
 {
-
-
     [SerializeField]
     private GameObject[] m_ObGameOver;
     private List<Vector2> m_vNormalPosition = new List<Vector2>();
     private List<Move2D> m_Move2DList       = new List<Move2D>();
-    private int m_nHeight = Screen.height + 100;
-    private int m_nWidth = Screen.width / 2;
-    private int m_nMoveIndex = 0;
-    private bool m_bEnd = false;
-    float m_fheightRatio = Screen.height / 1080.0f;
-    float m_fwidthRatio = Screen.width / 1920.0f;
+    private int m_nHeight;
+    private int m_nWidth;
+    private int m_nMoveIndex;
+    private bool m_bEnd;
+    float m_fheightRatio;
+    float m_fwidthRatio;
 
     private CallBackFunc m_Func = null;
  
     private void Awake()
     {
+        m_nHeight = Screen.height + 100;
+        m_nWidth = Screen.width / 2;
+        m_nMoveIndex = 0;
+        m_bEnd = false;
+
         m_fheightRatio = Screen.height / 1080.0f;
         m_fwidthRatio = Screen.width / 1920.0f;
         for (int i = 0; i < m_ObGameOver.Length; i++)

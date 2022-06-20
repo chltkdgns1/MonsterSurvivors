@@ -15,7 +15,8 @@ public class PlayGameMananger : MonoBehaviour
 
     void init()
     {
-        PlayingGameManager.InitGameState();
+        PlayingGameManager.ClearGAmeState();
+        //PlayingGameManager.InitGameState();
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
         //PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
         //Debug.Log("¼³Á¤ Àû¿ëµÊ?");

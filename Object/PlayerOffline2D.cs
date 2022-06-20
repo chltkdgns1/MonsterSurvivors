@@ -349,8 +349,7 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
             Color temp                  = m_Renderer.material.color;
             temp.a                      = 1f;
             m_Renderer.material.color   = temp;
-            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
-            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+            PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_NO_ENEMY);
         }
     }
 
@@ -371,10 +370,10 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
     void FixedUpdate()
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;         // Pause
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
-
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY)
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;         // Pause
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
+                                                
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_NO_ENEMY)
         {
             NoEnemyState();
         }
@@ -464,9 +463,9 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
 
         if (collision.CompareTag("Monster"))
         {
@@ -492,9 +491,9 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_NO_ENEMY) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_NO_ENEMY) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
 
         if (collision.CompareTag("Monster"))
         {
@@ -530,7 +529,7 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
         while (m_bDeadWait == false) yield return null;
 
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
 
         m_bDeadWait = false;
 

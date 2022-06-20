@@ -141,19 +141,19 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
     {
         GameUIManager.instance.SetActiveTreasureBox(false);
         TreasureBoxManager.instance.SetApplySkill(); 
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         TreasureBoxManager.instance.SetTreasureStartState(false);
     }
 
     static public void PrintSkillStatus(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveSkillStatus(true);
     }
 
     static public void UnPrintSkillStatus(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveSkillStatus(false);
     }
 
@@ -165,7 +165,7 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
 
     static public void PrintCraftingList(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(true);
     }
 

@@ -93,7 +93,7 @@ public class UIEventManager
 
     static public void UnPrintSkillStatus(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveSkillStatus(false);
     }
     static public void OnClickDownEvent(CommunicationTypeDataClass value)  // 개수가 많아지면 관리가 힘들 것 같긴함 object 를 넘겨주어도 상관없고 오브젝트 사용안해도됨
@@ -147,20 +147,22 @@ public class UIEventManager
 
     static private void PrintCraftingList(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(true);
     }
 
     static private void UnPrintCraftingList(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(false);
     }
 
     static private void CraftSelect(CommunicationTypeDataClass value)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
-        GameUIManager.instance.SetActiveCraftingList(false);
+        //PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
+        //GameUIManager.instance.SetActiveCraftingList(false);
+
+        // 건축물을 여러개 만들 수 있는데 크래프팅 창을 제거할 수 없다.
 
         CraftManager.instance.StartCrafting(value.GetParameter());
     }

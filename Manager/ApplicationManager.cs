@@ -8,6 +8,7 @@ public class ApplicationManager : MonoBehaviour
 
     static public ApplicationManager instance = null;
 
+    
     void Awake()
     {
 #if UNITY_EDITOR

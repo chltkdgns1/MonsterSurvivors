@@ -112,13 +112,14 @@ public class GameUIManager : MonoBehaviour
 
     private void Start()
     {
-
+        DrawGrid.instance.SetLinePosition(50);
+        DrawGrid.instance.RenderingGrid();
     }
 
     private void Update()
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
 
         SetTimeText();
         SetLevel();
@@ -129,7 +130,7 @@ public class GameUIManager : MonoBehaviour
     {
         if (PlayTimeManager.instance.IsTimeEnd() == true)
         {
-            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+            PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
             SetActiveEndGame(true);
             PrintDeadQuestion(false);
         }
@@ -199,8 +200,8 @@ public class GameUIManager : MonoBehaviour
 
         bool bEscape = !flag;
 
-        if(bEscape)     PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);    
-        else            PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        if(bEscape)     PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_NOMAL);    
+        else            PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
      
         AndroidKeyUIManager.instance.SetEscape(flag);
     }
@@ -284,13 +285,13 @@ public class GameUIManager : MonoBehaviour
         }
 
         SetActiveRestartScreen(false);
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NO_ENEMY);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_NO_ENEMY);
     }
 
     public void PlayerLevelUp()
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         PrintExMax();
 
         int nSkill = 0, nType = 0;
@@ -327,7 +328,7 @@ public class GameUIManager : MonoBehaviour
 
     public void PlayerLevelUpEnd(int index) // 첫번째, 두번째 , 세번째 스킬 인덱스
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         SetActiveLevelUp(false);
         SelectSkill(m_nSkill[index], m_nType[index], m_fValue[index]);   
     }

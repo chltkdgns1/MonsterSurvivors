@@ -118,8 +118,8 @@ public class MonsterManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
 
         for (int i = 0; i < m_fMonsterCreatePeriodicSum.Length; i++)
         {

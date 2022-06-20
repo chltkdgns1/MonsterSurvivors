@@ -43,8 +43,7 @@ public class CraftManager : MonoBehaviour
 
     public void StartCrafting(string[] param)
     {
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_CRAFTING);
-
+        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
         m_ParamData = param;
 
         int nGroup = int.Parse(m_ParamData[0]);
@@ -65,7 +64,7 @@ public class CraftManager : MonoBehaviour
         tempTouch.DeleteTouchEvent();
         m_ObCraftObject[nGroup][nType].SetActive(false);
 
-        PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
     }
 
     void AwakeInit() // Awake 에서만 초기화

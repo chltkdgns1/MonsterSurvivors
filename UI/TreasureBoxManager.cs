@@ -82,7 +82,7 @@ public class TreasureBoxManager : MonoBehaviour
                 m_TreasureBoxQueue.Dequeue();
                 InitSettings();
                 GameUIManager.instance.SetActiveTreasureBox(true);
-                PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_PAUSE);
+                PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
                 PrintBox(nSize);
             }
         }

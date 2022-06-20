@@ -42,9 +42,9 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
     // Update is called once per frame
     public void OnFirstTouch(Vector3 touchPoint)
     {
-        int nState = PlayingGameManager.GetGameState();
-        if (nState == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (nState == DefineManager.PLAYING_STATE_CRAFTING) return;
+        DefineManager.GameState nState = PlayingGameManager.GetGameState();
+        if (nState == DefineManager.GameState.PLAYING_STATE_PAUSE)      return;
+        if (nState == DefineManager.GameState.PLAYING_STATE_CRAFTING)   return;
        
         m_vFirstPosition = touchPoint;
         CreateTouchPad(touchPoint);
@@ -73,17 +73,17 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
 
     public void OnFirstTouchDrag(Vector3 touchPoint)
     {
-        int nState = PlayingGameManager.GetGameState();
+        DefineManager.GameState nState = PlayingGameManager.GetGameState();
 
-        if (nState == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (nState == DefineManager.PLAYING_STATE_CRAFTING) return;
+        if (nState == DefineManager.GameState.PLAYING_STATE_PAUSE)      return;
+        if (nState == DefineManager.GameState.PLAYING_STATE_CRAFTING)   return;
         
         MoveTouchPad(touchPoint);
     }
 
     public void OnOtherTouch(List<TouchCircle> touchPoint)
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
 
         int sz = m_touchList.Count;
         for (int i = 0; i < sz; i++) m_touchList[i].OnSkill(touchPoint);
@@ -91,7 +91,7 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
 
     public void OnFirstTouchEnd()
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
 
         if (m_bMouseUseState) return;
         GameUIManager.instance.SetActiveTouchPad(false);
@@ -100,8 +100,8 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
 
     public void OnClick(Vector3 clickPosition)
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_CRAFTING) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE)       return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING)    return;
 
         m_bMouseUseState = true;
         m_vFirstPosition = clickPosition;
@@ -110,13 +110,13 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
 
     public void OnClickMove(Vector3 clickPosition)
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
         MoveTouchPad(clickPosition);
     }
 
     public void OnClickUp(Vector3 clickPosition)
     {
-        if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
+        if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
 
         m_bMouseUseState = false;
         GameUIManager.instance.SetActiveTouchPad(false);
