@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class DrawGrid : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject m_LineRenderParent;
+
     static public DrawGrid instance = null;
 
     [SerializeField]
@@ -16,6 +19,11 @@ public class DrawGrid : MonoBehaviour
     private List<LineRenderer> m_ColRenderer = new List<LineRenderer>();
     private List<LineRenderer> m_RowRenderer = new List<LineRenderer>();
     private List<GameObject> m_ObList = new List<GameObject>();
+
+    [SerializeField]
+    private Color m_color;
+
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -39,18 +47,25 @@ public class DrawGrid : MonoBehaviour
             int dist = length * 2 - m_ColRenderer.Count;
             for(int i = 0; i < dist; i++)
             {
-                m_ObList.Add(Instantiate(m_RenderLine));
-                m_ObList.Add(Instantiate(m_RenderLine));              
+                m_ObList.Add(Instantiate(m_RenderLine, m_LineRenderParent.transform));
+                m_ObList.Add(Instantiate(m_RenderLine, m_LineRenderParent.transform));              
                 LineRenderer temp1 = m_ObList[m_ObList.Count - 2].GetComponent<LineRenderer>();
                 LineRenderer temp2 = m_ObList[m_ObList.Count - 1].GetComponent<LineRenderer>();
                 temp1.startWidth = 0.05f;
                 temp1.endWidth = 0.05f;
                 temp2.startWidth = 0.05f;
                 temp2.endWidth = 0.05f;
+                temp1.SetColors(m_color, m_color);
+                temp2.SetColors(m_color, m_color);
                 m_ColRenderer.Add(temp1);
                 m_RowRenderer.Add(temp2);
+
+                //LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
+                //lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
+                //lineRenderer.SetColors(c1, c2);
             }
         }
+
 
         m_nLength = length;
 
@@ -58,10 +73,10 @@ public class DrawGrid : MonoBehaviour
 
         for (int i = -m_nLength; i < m_nLength; i++)
         {
-            m_vColList.Add(new Vector3(i, -m_nLength, -7));
-            m_vColList.Add(new Vector3(i, fEnd, -7));
-            m_vRowList.Add(new Vector3(-m_nLength, i, -7));
-            m_vRowList.Add(new Vector3(fEnd, i, -7));
+            m_vColList.Add(new Vector3(i, -m_nLength, -1));
+            m_vColList.Add(new Vector3(i, fEnd, -1));
+            m_vRowList.Add(new Vector3(-m_nLength, i, -1));
+            m_vRowList.Add(new Vector3(fEnd, i, -1));
         }
     }
 
@@ -82,10 +97,6 @@ public class DrawGrid : MonoBehaviour
 
     public void SetActive(bool flag)
     {
-        int cnt = m_ObList.Count;
-        for (int i = 0; i < cnt; i++)
-        {
-            m_ObList[i].SetActive(flag);
-        }
+        m_LineRenderParent.SetActive(flag);
     }
 }

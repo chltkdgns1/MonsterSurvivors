@@ -37,6 +37,7 @@ public class UIClickStartManager            // UI °¡ Å¬¸¯ ÇÑ ÈÄ¿¡ ´ÙÀ½ ½ÇÇà µÉ ½
         m_startFunc[20] = UnPrintSkillStatus;
         m_startFunc[21] = PrintResultDlg;
         m_startFunc[22] = PrintCraftingList;
+        m_startFunc[25] = CraftOrderSelect;
 
         m_startFunc[199] = TestCode;
 
@@ -167,6 +168,7 @@ public class UIClickStartManager            // UI °¡ Å¬¸¯ ÇÑ ÈÄ¿¡ ´ÙÀ½ ½ÇÇà µÉ ½
     {
         PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(true);
+        DrawGrid.instance.SetActive(true);
     }
 
     static public void TestCode(CommunicationTypeDataClass value)
@@ -178,5 +180,11 @@ public class UIClickStartManager            // UI °¡ Å¬¸¯ ÇÑ ÈÄ¿¡ ´ÙÀ½ ½ÇÇà µÉ ½
         //GameUIManager.instance.SetActiveExitPlayGame(true);
         //GameUIManager.instance.SetActivePauseBackScreen(true);
     }
-
+    static private void CraftOrderSelect(CommunicationTypeDataClass value)
+    {
+        string[] param = value.GetParameter();
+        int nGid = int.Parse(param[0]);
+        int nGIndex = int.Parse(param[1]);
+        GroupManager.instance.GroupAction(nGid, nGIndex);
+    }
 }

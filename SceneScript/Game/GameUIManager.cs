@@ -114,6 +114,7 @@ public class GameUIManager : MonoBehaviour
     {
         DrawGrid.instance.SetLinePosition(50);
         DrawGrid.instance.RenderingGrid();
+        DrawGrid.instance.SetActive(false);
     }
 
     private void Update()

@@ -37,6 +37,7 @@ public class UIEventManager
         m_startFuncDown[23] = UnPrintCraftingList;
 
         m_startFuncDown[24] = CraftSelect;          // 타워 생성 클릭했을 경우
+        m_startFuncDown[25] = CraftOrderSelect;
 
         m_startFuncDown[100] = ClickAccessStop;
         m_startFuncDown[0] = LoadScene;
@@ -149,12 +150,14 @@ public class UIEventManager
     {
         PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(true);
+        DrawGrid.instance.SetActive(true);
     }
 
     static private void UnPrintCraftingList(CommunicationTypeDataClass value)
     {
         PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(false);
+        DrawGrid.instance.SetActive(false);
     }
 
     static private void CraftSelect(CommunicationTypeDataClass value)
@@ -165,5 +168,13 @@ public class UIEventManager
         // 건축물을 여러개 만들 수 있는데 크래프팅 창을 제거할 수 없다.
 
         CraftManager.instance.StartCrafting(value.GetParameter());
+    }
+
+    static private void CraftOrderSelect(CommunicationTypeDataClass value)
+    {
+        string[] param = value.GetParameter();
+        int nGid = int.Parse(param[0]);
+        int nGIndex = int.Parse(param[1]);
+        GroupManager.instance.GroupAction(nGid, nGIndex);
     }
 }

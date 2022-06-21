@@ -143,6 +143,11 @@ public class Clicked : MonoBehaviour            // UI 가 클릭되었을 때
         Execute();
     }
 
+    public void SetParam(string[] param)
+    {
+        m_value.SetParameter(param);
+    }
+
     public void Execute()
     {
         UIClickStartManager.Execute(m_value);
