@@ -51,21 +51,21 @@ namespace DataManage
     [System.Serializable]
     public struct SkillValue
     {
-        readonly public int m_nSkill;
-        readonly public int m_nMinDamage;
-        readonly public int m_nMaxDamage;
-        readonly public int m_nFollowOption;
+        public int m_nSkill;
+        public int m_nMinDamage;
+        public int m_nMaxDamage;
+        public int m_nFollowOption;
 
-        readonly public float m_fCoolTime;
-        readonly public float m_fSkillTime;
-        readonly public float m_fSpeed;
+        public float m_fCoolTime;
+        public float m_fSkillTime;
+        public float m_fSpeed;
 
-        readonly public float m_fNuckBack;
-        readonly public float m_fBlood;
+        public float m_fNuckBack;
+        public float m_fBlood;
 
-        readonly public GameObject m_ObSkill;
+        public GameObject m_ObSkill;
 
-        readonly public SkillFileValue m_fileValue;
+        public SkillFileValue m_fileValue;
     }
 
     [System.Serializable]
@@ -106,10 +106,10 @@ namespace DataManage
         static public InitData instance = null;
 
         [SerializeField]
-        readonly private List<SkillValue> m_SkillData = new List<SkillValue>();
-        readonly private List<List<Vector3>> m_vListDirect = new List<List<Vector3>>();
-        readonly private List<CraftStructure> m_vCraftStructer = new List<CraftStructure>();
-        readonly private List<CraftTower> m_vCraftTower= new List<CraftTower>();
+        private List<SkillValue> m_SkillData = new List<SkillValue>();
+        private List<List<Vector3>> m_vListDirect = new List<List<Vector3>>();
+        private List<CraftStructure> m_vCraftStructer = new List<CraftStructure>();
+        private List<CraftTower> m_vCraftTower= new List<CraftTower>();
 
         private void Awake()
         {
