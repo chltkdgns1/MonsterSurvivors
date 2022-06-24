@@ -16,15 +16,14 @@ public class PlayGameMananger : MonoBehaviour
     void init()
     {
         PlayingGameManager.ClearGAmeState();
-        //PlayingGameManager.InitGameState();
-        //Screen.orientation = ScreenOrientation.LandscapeLeft;
-        //PlayingGameManager.SetGameState(DefineManager.PLAYING_STATE_NOMAL);
-        //Debug.Log("¼³Á¤ Àû¿ëµÊ?");
+        InitPlayGameData();
     }
 
-    void Start()
+    void InitPlayGameData()
     {
- 
+        DataManage.DataManager.instance.Level = 1;
+        DataManage.DataManager.instance.Exe = 0;
+        DataManage.DataManager.instance.InGameGold = 0;
     }
 
     // Update is called once per frame

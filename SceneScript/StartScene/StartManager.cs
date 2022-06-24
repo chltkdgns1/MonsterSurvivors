@@ -45,11 +45,11 @@ public class StartManager : MonoBehaviour
             m_CompToggle[i] = m_ObToggle[i].GetComponent<Toggle>();
         }
 
-        if (OptionManager.instance.GetRobbyBackgrounSound() == 0) m_CompToggle[0].isOn = false;
+        if (DataManage.OptionManager.instance.GetRobbyBackgrounSound() == 0) m_CompToggle[0].isOn = false;
         else m_CompToggle[0].isOn = true;
-        if (OptionManager.instance.GetInGameBackgroundSound() == 0) m_CompToggle[1].isOn = false;
+        if (DataManage.OptionManager.instance.GetInGameBackgroundSound() == 0) m_CompToggle[1].isOn = false;
         else m_CompToggle[1].isOn = true;
-        if (OptionManager.instance.GetInGameSound() == 0) m_CompToggle[2].isOn = false;
+        if (DataManage.OptionManager.instance.GetInGameSound() == 0) m_CompToggle[2].isOn = false;
         else m_CompToggle[2].isOn = true;
 
         m_CompToggle[0].onValueChanged.AddListener(SetLobbyBackgroundTrackChange);
@@ -68,19 +68,19 @@ public class StartManager : MonoBehaviour
     {
         int value = flag == false ? 0 : 1;
         //Debug.Log("value : " + value);
-        OptionManager.instance.SetRobbyBackgrounSound(value);
+        DataManage.OptionManager.instance.SetRobbyBackgrounSound(value);
     }
 
     void SetInGameBackgroundTrackChange(bool flag)
     {
         int value = flag == false ? 0 : 1;
-        OptionManager.instance.SetInGameBackGroundSound(value);
+        DataManage.OptionManager.instance.SetInGameBackGroundSound(value);
     }
 
     void SetInGameSoundChange(bool flag)
     {
         int value = flag == false ? 0 : 1;
-        OptionManager.instance.SetInGameSound(value);
+        DataManage.OptionManager.instance.SetInGameSound(value);
     }
 
     // Update is called once per frame
@@ -91,9 +91,9 @@ public class StartManager : MonoBehaviour
 
     void ExAudioState()
     {
-        if (m_nBackgroundTrack != OptionManager.instance.GetRobbyBackgrounSound())
+        if (m_nBackgroundTrack != DataManage.OptionManager.instance.GetRobbyBackgrounSound())
         {
-            m_nBackgroundTrack = OptionManager.instance.GetRobbyBackgrounSound();
+            m_nBackgroundTrack = DataManage.OptionManager.instance.GetRobbyBackgrounSound();
             if (m_nBackgroundTrack == 1)    m_ObAudioSoucre.Play();
             else                            m_ObAudioSoucre.Stop();
         }

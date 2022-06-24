@@ -61,9 +61,6 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     private float m_fDeadMotionTime;
     private float m_fNoEnemyTime;
 
-    private int m_nLevel;
-    private int m_nEx;
-
     private bool m_bFirst;
 
     Renderer m_Renderer;
@@ -73,8 +70,6 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
     private long m_lDamageTime;
 
-    private int m_nKillMonster;
-
     private Hp m_Hp;
 
     private void Awake()
@@ -82,7 +77,6 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
         if (instance == null)   instance = this;
         else                    Destroy(gameObject);
 
-        m_nKillMonster = 0;
         FirstStartInit();
         SetBool();
         initValue();
@@ -95,9 +89,6 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
     void FirstStartInit()
     {
-        m_nLevel    = 1;
-        m_nEx       = 0;
-
         m_ObNearestObject   = null;
         m_fDistance         = 1e5f;
 
@@ -247,7 +238,7 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
         initValue();
 
         m_Hp.SetActive(true);
-        m_Hp.SetMaxHp();
+        m_Hp.SetRemainMaxHp();
         m_Hp.ChangeRemainHp();
         m_targetPosition = transform.position;
         m_Hp.MoveHpBar(transform.position);
@@ -598,21 +589,18 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
 
     public void AddEx(int nEx)
     {
-        m_nEx += nEx;
+        DataManage.DataManager.instance.Exe += nEx;
 
-        int maxEx = ValueManager.instance.GetLevelEx(m_nLevel);
-        if(m_nEx >= maxEx)
+        int maxEx = DataManage.ValueManager.instance.GetLevelEx(DataManage.DataManager.instance.Level);
+        if(DataManage.DataManager.instance.Exe >= maxEx)
         {
-            m_nEx %= maxEx;
-            m_nLevel++;                             // 레벨 증가
+            DataManage.DataManager.instance.Exe %= maxEx;
+            DataManage.DataManager.instance.Level++;           // 레벨 증가
             GameUIManager.instance.PlayerLevelUp(); // 레벨업 해줌
             // 레벨업 UI 출력
         }
 
     }
-
-    public int GetLevel()   { return m_nLevel; }
-    public int GetEx()      { return m_nEx; }
 
     public void OnSkill(List<TouchCircle> skills) { }
 
@@ -626,9 +614,6 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
         m_Hp.SetPlusHp(fPlusHp);
         m_Hp.ChangeRemainHp();
     }
-
-    public int GetKillMonster() { return m_nKillMonster; }
-    public void AddKillMonster() { m_nKillMonster++; }
 }
 
 // 딱 한번만 초기화되어야하는 변수

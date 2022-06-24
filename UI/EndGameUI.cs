@@ -13,8 +13,8 @@ public class EndGameUI : MonoBehaviour
     {
         if (m_bInit == false) return;
         m_TextList[0].text = Module.GetTimeText((int)PlayTimeManager.instance.GetTime());
-        m_TextList[1].text = Module.GetLevelText(PlayerOffline2D.instance.GetLevel());
-        m_TextList[2].text = Module.GetKillMonsterText(PlayerOffline2D.instance.GetKillMonster());
+        m_TextList[1].text = Module.GetLevelText(DataManage.DataManager.instance.Level);
+        m_TextList[2].text = Module.GetKillMonsterText(DataManage.DataManager.instance.KillMonster);
         m_TextList[3].text = Module.GetDamageText(SkillManager.instance.GetAllSumDamage());
     }
 
@@ -22,8 +22,8 @@ public class EndGameUI : MonoBehaviour
     {
         m_bInit = true;
         m_TextList[0].text = Module.GetTimeText((int)PlayTimeManager.instance.GetTime());
-        m_TextList[1].text = Module.GetLevelText(PlayerOffline2D.instance.GetLevel());
-        m_TextList[2].text = Module.GetKillMonsterText(PlayerOffline2D.instance.GetKillMonster());
+        m_TextList[1].text = Module.GetLevelText(DataManage.DataManager.instance.Level);
+        m_TextList[2].text = Module.GetKillMonsterText(DataManage.DataManager.instance.KillMonster);
         m_TextList[3].text = Module.GetDamageText(SkillManager.instance.GetAllSumDamage());
     }
 }

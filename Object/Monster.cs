@@ -287,7 +287,7 @@ public class Monster : MonoBehaviour, IMonster, IDamage
             initAnim();
             m_Anim.SetBool(m_sRun, true);
             m_Renderer.material.color = Color.white;
-            PlayerOffline2D.instance.AddKillMonster();
+            DataManage.DataManager.instance.KillMonster++;
             MonsterManager.instance.DeadMonster(m_nKey, m_nEx, m_nBox);
             //StartCoroutine(DeadMotion());
         }

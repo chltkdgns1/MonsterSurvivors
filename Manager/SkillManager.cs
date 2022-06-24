@@ -84,23 +84,20 @@ public class SkillManager : MonoBehaviour
 
         public int                  m_nCnt;
 
-        public SkillData(
-            float fCoolTime,    float fSkillContinueTime,   int nSkillKey,      int nCnt, 
-            int nMinDamage,     int nMaxDamage,             float fSpeed,       GameObject ObSkill, 
-            int nFollow,        int nSkillManagerIndex,     float fNuckBack,    float fBlood                                 ) // 새로운 스킬 생성
+        public SkillData(DataManage.SkillValue value, int nSkillManagerIndex, int nCnt) // 새로운 스킬 생성
         {
             m_nCnt                  = 1;
-            m_fSkillContinueTime    = fSkillContinueTime;
+            m_fSkillContinueTime    = value.m_fSkillTime;
 
-            m_nSkillKey             = nSkillKey;
+            m_nSkillKey             = value.m_nSkill;
             m_nSkillManagerIndex    = nSkillManagerIndex;
             m_nUseIndex             = 0;
 
-            m_fSpeed                = fSpeed;
+            m_fSpeed                = value.m_fSpeed;
 
-            m_fBeginMinDamage       = nMinDamage;
-            m_fBeginMaxDamage       = nMaxDamage;
-            m_fBeginCoolTime        = fCoolTime;
+            m_fBeginMinDamage       = value.m_nMinDamage;
+            m_fBeginMaxDamage       = value.m_nMaxDamage;
+            m_fBeginCoolTime        = value.m_fCoolTime;
             m_fRemainCoolTime       = m_fBeginCoolTime;
 
             m_fCoolTime             = m_fBeginCoolTime;
@@ -108,10 +105,10 @@ public class SkillManager : MonoBehaviour
             m_fMaxDamage            = m_fBeginMaxDamage;
 
 
-            m_fNuckBack             = fNuckBack; 
-            m_fBloodPercent         = fBlood;
+            m_fNuckBack             = value.m_fNuckBack; 
+            m_fBloodPercent         = value.m_fBlood;
 
-            m_nFollowOption         = nFollow;
+            m_nFollowOption         = value.m_nFollowOption;
 
             m_fSumDamage            = 0f;
             m_fMaxDPS               = 0f;
@@ -126,7 +123,7 @@ public class SkillManager : MonoBehaviour
                 //else
                 //    ObNewSkill = Instantiate(ObSkill, ObSkill.transform.position, ObSkill.transform.rotation);
 
-                ObNewSkill = Instantiate(ObSkill, ObSkill.transform.position, ObSkill.transform.rotation);
+                ObNewSkill = Instantiate(value.m_ObSkill, value.m_ObSkill.transform.position, value.m_ObSkill.transform.rotation);
                 ObNewSkill.SetActive(false);
 
                 m_vBeginLocalScale  = ObNewSkill.transform.localScale;
@@ -134,7 +131,7 @@ public class SkillManager : MonoBehaviour
 
                 Skill temp = ObNewSkill.GetComponent<Skill>();
 
-                Vector3 vStartPosition = ValueManager.instance.GetCreatePosition(m_nSkillKey, m_nCnt - 1);
+                Vector3 vStartPosition = DataManage.InitData.instance.GetCreatePosition(m_nSkillKey, m_nCnt - 1);
 
                 temp.SetInit(m_nSkillManagerIndex, m_fSpeed, m_fBeginMinDamage, m_fBeginMaxDamage, m_vBeginLocalScale, vStartPosition * (m_vLocalScale.x), m_nFollowOption);
 
@@ -173,7 +170,7 @@ public class SkillManager : MonoBehaviour
 
                 Skill temp = ObNewSkill.GetComponent<Skill>();
 
-                Vector3 vStartPosition = ValueManager.instance.GetCreatePosition(m_nSkillKey, m_nCnt - 1);
+                Vector3 vStartPosition = DataManage.InitData.instance.GetCreatePosition(m_nSkillKey, m_nCnt - 1);
                 temp.SetInit(m_nSkillManagerIndex, m_fSpeed, m_fMinDamage, m_fMaxDamage, m_vLocalScale, vStartPosition * (m_vLocalScale.x), m_nFollowOption);
 
                 m_SkillStruct[i].Add(ObNewSkill);
@@ -201,7 +198,7 @@ public class SkillManager : MonoBehaviour
 
         public void UpCount(int index)         // 개수 증가
         {
-            GameObject ObPrefSkill = ValueManager.instance.GetSkill(index);
+            GameObject ObPrefSkill = DataManage.InitData.instance.GetSkill(index);
             Add(ObPrefSkill);
         }
 
@@ -275,22 +272,22 @@ public class SkillManager : MonoBehaviour
         
     }
 
-    public SkillStatusStruct GetSkillStatusData(int index)
+    public DataManage.SkillStatusStruct GetSkillStatusData(int index)
     {
         if(index < 0 || m_SkillData.Count <= index)
         {
             Debug.LogError("public SkillStatus GetSkillStatusData(int index) cnt Error");
-            return new SkillStatusStruct();
+            return new DataManage.SkillStatusStruct();
         }
 
         return GetPackingData(index);
     }
 
-    SkillStatusStruct GetPackingData(int index)
+    DataManage.SkillStatusStruct GetPackingData(int index)
     {
-        string sSkillName = ValueManager.instance.GetSkillName(m_SkillData[index].m_nSkillKey);
-        string sActivate = ValueManager.instance.GetSkillActive(m_SkillData[index].m_nSkillKey) ? "액티브" : "패시브";
-        return new SkillStatusStruct(
+        string sSkillName = DataManage.InitData.instance.GetSkillName(m_SkillData[index].m_nSkillKey);
+        string sActivate = DataManage.InitData.instance.GetSkillActive(m_SkillData[index].m_nSkillKey) ? "액티브" : "패시브";
+        return new DataManage.SkillStatusStruct(
             m_SkillData[index].m_nSkillKey,         m_SkillData[index].m_fMaxDamage,        m_SkillData[index].m_fCoolTimePercent,  m_SkillData[index].m_fLocalSizePercent,
             m_SkillData[index].m_fNuckBackPercent,  m_SkillData[index].m_fBloodPercent,     m_SkillData[index].m_nCnt,              sActivate,                              sSkillName,
             m_SkillData[index].m_fSumDamage,        m_SkillData[index].m_fMaxDPS);
@@ -370,15 +367,11 @@ public class SkillManager : MonoBehaviour
         }
     }
 
-    void AddSkill(
-        int index,          int nKey,           GameObject ObSkill,     float fCoolTime, 
-        float fSkillTime,   int nMinDamage,     int nMaxDamage, 
-        float fSpeed,       int nFollowOption,  float fNuckBack = 0f,   float fBlood = 0f)
+    void AddSkill(int index, DataManage.SkillValue value)
     {
-
         int nSkillManagerIndex = m_SkillData.Count;
-        if (index == -1)    m_SkillData.Add(new SkillData(fCoolTime, fSkillTime, nKey, 20, nMinDamage, nMaxDamage, fSpeed, ObSkill, nFollowOption, nSkillManagerIndex, fNuckBack, fBlood)); 
-        else                m_SkillData[index].Add(ObSkill);       
+        if (index == -1)    m_SkillData.Add(new SkillData(value, nSkillManagerIndex, 20)); 
+        else                m_SkillData[index].Add(value.m_ObSkill);       
     }
 
     public bool IsExistSkill(int nKey)
@@ -401,7 +394,7 @@ public class SkillManager : MonoBehaviour
 
     public void RandFirstSkill()
     {
-        int sz      = ValueManager.instance.GetSkillSize();
+        int sz      = DataManage.InitData.instance.GetSkillSize();
         int nSkill  = Random.Range(0, sz);
 
         int index = GetSkillIndex(nSkill);
@@ -426,15 +419,25 @@ public class SkillManager : MonoBehaviour
 
     void AddSkill(int nSkill, int index)    // 스킬 오브젝트 추가
     {
-        GameObject ObPrefSkill = ValueManager.instance.GetSkill(nSkill);
+        GameObject ObPrefSkill = DataManage.InitData.instance.GetSkill(nSkill);
+
+        DataManage.SkillValue ?checkSkillData = DataManage.InitData.instance.GetSkillValue(nSkill);
+        if (checkSkillData == null) return;
+
+        DataManage.SkillValue skillValue = checkSkillData.Value;
 
         switch (nSkill)
         {
-            case 0:     AddSkill(index, nSkill, ObPrefSkill, 4f, 1f , 2, 5, 0f, 0   );         break;
-            case 1:     AddSkill(index, nSkill, ObPrefSkill, 2f, 0.2f, 3, 6, 0f, 0  );         break;
-            case 2:     AddSkill(index, nSkill, ObPrefSkill, 2f, 1f, 2, 4, 0.1f, 1  );         break;
-            case 3:     AddSkill(index, nSkill, ObPrefSkill, 2f, 1f, 2, 4, 0f, 0    );         break;
-            case 4:     AddSkill(index, nSkill, ObPrefSkill, 5f, 3f, 3, 6, 0.2f, 2  );         break;
+            case 0: AddSkill(index, skillValue); break;
+            case 1: AddSkill(index, skillValue); break;
+            case 2: AddSkill(index, skillValue); break;
+            case 3: AddSkill(index, skillValue); break;
+            case 4: AddSkill(index, skillValue); break;
+            //case 0:     AddSkill(index, nSkill, ObPrefSkill, 4f, 1f , 2, 5, 0f, 0   );         break;
+            //case 1:     AddSkill(index, nSkill, ObPrefSkill, 2f, 0.2f, 3, 6, 0f, 0  );         break;
+            //case 2:     AddSkill(index, nSkill, ObPrefSkill, 2f, 1f, 2, 4, 0.1f, 1  );         break;
+            //case 3:     AddSkill(index, nSkill, ObPrefSkill, 2f, 1f, 2, 4, 0f, 0    );         break;
+            //case 4:     AddSkill(index, nSkill, ObPrefSkill, 5f, 3f, 3, 6, 0.2f, 2  );         break;
         }
     }
 
@@ -454,7 +457,7 @@ public class SkillManager : MonoBehaviour
 
     public void GetRandSkillStatus(ref int nSkill, ref int nType, ref float fValue, List<int> ListMargin = null)
     { 
-        int sz = ValueManager.instance.GetSkillSize();
+        int sz = DataManage.InitData.instance.GetSkillSize();
         nSkill = Random.Range(0, sz);
 
         if(nSkill < DefineManager.ACTIVE_SKILL_SIZE) // 액티브 스킬이라면.
@@ -462,7 +465,7 @@ public class SkillManager : MonoBehaviour
             if (IsExistSkill(nSkill) == false)  nType = (int)DefineManager.SKILL.SKILL_COUNT;      
             else                                nType = Random.Range(0, DefineManager.ACTIVE_SKILL_TYPE_SIZE);
 
-            int nSkillLimitCount    = ValueManager.instance.GetLimitSize(nSkill);
+            int nSkillLimitCount    = DataManage.InitData.instance.GetLimitSize(nSkill);
             int nSkillIndex = GetSkillIndex(nSkill);
 
             int nMarginCount = 0;

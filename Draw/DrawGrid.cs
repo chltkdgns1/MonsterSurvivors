@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Tilemaps;
 public class DrawGrid : MonoBehaviour
 {
     [SerializeField]
     private GameObject m_LineRenderParent;
-
     static public DrawGrid instance = null;
 
     [SerializeField]
@@ -25,7 +24,7 @@ public class DrawGrid : MonoBehaviour
 
 
     private void Awake()
-    {
+    {     
         if (instance == null) instance = this;
         else Destroy(gameObject);
 

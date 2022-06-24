@@ -5,15 +5,17 @@ using UnityEngine;
 
 
 
-public class CraftManager : MonoBehaviour
+public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
 {
-
     static public CraftManager instance = null;
 
     [SerializeField]
     private SubArray [] m_ObPrefabs;
 
-    private List<List<GameObject>> m_ObCraftObject = new List<List<GameObject>>();
+    [SerializeField]
+    private Sprite[] m_sprites;
+
+    private List<List<object>> m_ObCraftObject = new List<List<object>>();
 
     private string[] m_ParamData;
 
@@ -49,22 +51,22 @@ public class CraftManager : MonoBehaviour
         int nGroup = int.Parse(m_ParamData[0]);
         int nType = int.Parse(m_ParamData[1]);
 
-        m_ObCraftObject[nGroup][nType].SetActive(true);
-        ITouchCraftManager tempTouch = m_ObCraftObject[nGroup][nType].GetComponent<ITouchCraftManager>();
-        tempTouch.RegistTouchEvnet();
+        //m_ObCraftObject[nGroup][nType].SetActive(true);
+        //ITouchCraftManager tempTouch = m_ObCraftObject[nGroup][nType].GetComponent<ITouchCraftManager>();
+        //tempTouch.RegistTouchEvnet();
     }
 
 
     public void EndCrafting()
     {
-        int nGroup = int.Parse(m_ParamData[0]);
-        int nType = int.Parse(m_ParamData[1]);
+        //int nGroup = int.Parse(m_ParamData[0]);
+        //int nType = int.Parse(m_ParamData[1]);
 
-        ITouchCraftManager tempTouch = m_ObCraftObject[nGroup][nType].GetComponent<ITouchCraftManager>();
-        tempTouch.DeleteTouchEvent();
-        m_ObCraftObject[nGroup][nType].SetActive(false);
+        //ITouchCraftManager tempTouch = m_ObCraftObject[nGroup][nType].GetComponent<ITouchCraftManager>();
+        //tempTouch.DeleteTouchEvent();
+        //m_ObCraftObject[nGroup][nType].SetActive(false);
 
-        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
+        //PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
     }
 
     void AwakeInit() // Awake 에서만 초기화
@@ -77,12 +79,12 @@ public class CraftManager : MonoBehaviour
         int nGroupSize = m_ObPrefabs.Length;
         for(int i = 0; i < nGroupSize; i++)
         {
-            List<GameObject> tempList = new List<GameObject>();
+            List<object> tempList = new List<object>();
             int nSz = m_ObPrefabs[i].m_subArray.Length;
             for(int k = 0; k < nSz; k++)
             {
                 tempList.Add(Instantiate(m_ObPrefabs[i].m_subArray[k]));
-                tempList[k].SetActive(false);
+                ((GameObject)tempList[k]).SetActive(false);
             }
             m_ObCraftObject.Add(tempList);
         }

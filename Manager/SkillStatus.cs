@@ -13,10 +13,6 @@ public class SkillStatus : MonoBehaviour
     private Image m_ImageSkillImage;
     [SerializeField]
     private bool m_bIsResult = false;
-    private void Awake()
-    {
-
-    }
 
     void InitObject()
     {
@@ -37,13 +33,7 @@ public class SkillStatus : MonoBehaviour
 
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    public void SetData(SkillStatusStruct value)
+    public void SetData(DataManage.SkillStatusStruct value)
     {
         if (m_bFirst == false)
         {
@@ -51,8 +41,8 @@ public class SkillStatus : MonoBehaviour
             InitObject();
         }
 
-        int nInSprite = ValueManager.instance.GetSpriteInImage(value.m_nSkillType);
-        string sPath = ValueManager.instance.GetSkillImagePath(value.m_nSkillType);
+        int nInSprite = DataManage.InitData.instance.GetSpriteInImage(value.m_nSkillType);
+        string sPath = DataManage.InitData.instance.GetSkillImagePath(value.m_nSkillType);
 
         if (nInSprite != 0) Module.SetSpriteImageAll(m_ImageSkillImage, sPath, nInSprite);          // 스프라이트 이미지 내에 있는 이미지라면 
         else Module.SetSpriteImage(m_ImageSkillImage, sPath);
@@ -79,13 +69,5 @@ public class SkillStatus : MonoBehaviour
         m_TextValueList[3].text = Module.GetPercentText((int)(value.m_fNuckbackValue  * 100));
         m_TextValueList[4].text = Module.GetPercentText(value.m_fBloodValue * 100);
         m_TextValueList[5].text = Module.GetCountText(value.m_nSkillCnt);
-    }
-
-  
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

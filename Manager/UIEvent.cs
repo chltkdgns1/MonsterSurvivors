@@ -68,9 +68,4 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
         if ((m_nOption & DefineManager.POINTER_DOWN) != DefineManager.POINTER_DOWN) return;
         UIEventManager.OnClickDownEvent(m_value);  
     }
-
-    public void SetParam(string[] param)
-    {
-        parameter = param;
-    }
 }

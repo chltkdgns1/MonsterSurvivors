@@ -112,7 +112,7 @@ public class GameUIManager : MonoBehaviour
 
     private void Start()
     {
-        DrawGrid.instance.SetLinePosition(50);
+        DrawGrid.instance.SetLinePosition(100);
         DrawGrid.instance.RenderingGrid();
         DrawGrid.instance.SetActive(false);
     }
@@ -144,10 +144,10 @@ public class GameUIManager : MonoBehaviour
 
     void SetLevel()
     {
-        int level = PlayerOffline2D.instance.GetLevel();
+        int level = DataManage.DataManager.instance.Level;
         m_TextLevelText.text = level + " Lv";
-        int levelMaxEx = ValueManager.instance.GetLevelEx(level);
-        float fPercent = (float)PlayerOffline2D.instance.GetEx() / levelMaxEx;
+        int levelMaxEx = DataManage.ValueManager.instance.GetLevelEx(level);
+        float fPercent = (float)DataManage.DataManager.instance.Exe / levelMaxEx;
         m_TextLevelPercent.text = (int)(fPercent * 100) + " %";
         m_ImageLevelGage.fillAmount = fPercent;
     }
@@ -302,15 +302,15 @@ public class GameUIManager : MonoBehaviour
         {
             SkillManager.instance.GetRandSkillStatus(ref nSkill, ref nType, ref fValue);
 
-            int nInSprite   = ValueManager.instance.GetSpriteInImage(nSkill);
-            string sPath    = ValueManager.instance.GetSkillImagePath(nSkill);
+            int nInSprite   = DataManage.InitData.instance.GetSpriteInImage(nSkill);
+            string sPath    = DataManage.InitData.instance.GetSkillImagePath(nSkill);
 
             if (nInSprite != 0) Module.SetSpriteImageAll(m_ImageSkill[i], sPath, nInSprite);          // 스프라이트 이미지 내에 있는 이미지라면 
             else                Module.SetSpriteImage(m_ImageSkill[i], sPath);
 
-            m_TextSkillName[i].text = ValueManager.instance.GetSkillName(nSkill);
+            m_TextSkillName[i].text = DataManage.InitData.instance.GetSkillName(nSkill);
 
-            List<string> templist   = Module.Split(ValueManager.instance.GetSkillComment(nSkill), '.');
+            List<string> templist   = Module.Split(DataManage.InitData.instance.GetSkillComment(nSkill), '.');
             string temp             = Module.MergeString(templist, '.', true);
 
             m_TextSkillComment[i].text = temp;

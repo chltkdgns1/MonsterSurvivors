@@ -45,7 +45,7 @@ public class GoogleLogin : MonoBehaviour
     {
         ParamterDicPackage pDicPackage = new ParamterDicPackage();
         await FirebaseManager.instance.ReadDataASync("Users/" + sId + "/NickName", pDicPackage);
-        ValueManager.instance.SetNickName((string)pDicPackage.m_Dictionary["NickName"]);
+        DataManage.DataManager.instance.SetNickName((string)pDicPackage.m_Dictionary["NickName"]);
     }
 
 }

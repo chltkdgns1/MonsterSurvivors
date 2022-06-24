@@ -112,7 +112,7 @@ public class LoadingGameManager : MonoBehaviour
             {
                 if (op.progress > 0.8f)
                 {
-                    if (m_imgProgress.fillAmount >= 1.0f && OptionManager.instance.GetAllLoad() && GoogleManagers.instance.CheckLoginStateEnd())
+                    if (m_imgProgress.fillAmount >= 1.0f && DataManage.OptionManager.instance.GetAllLoad() && GoogleManagers.instance.CheckLoginStateEnd())
                     {
                         op.allowSceneActivation = true;
                         break;

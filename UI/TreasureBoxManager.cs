@@ -206,8 +206,8 @@ public class TreasureBoxManager : MonoBehaviour
         {
             Image ImageSkill    = m_ObSkill[i].GetComponent<Image>();
             int nSkill          = m_ListSkillFormat[i].m_nSkill;
-            int nInSprite       = ValueManager.instance.GetSpriteInImage(nSkill);
-            string sPath        = ValueManager.instance.GetSkillImagePath(nSkill);
+            int nInSprite       = DataManage.InitData.instance.GetSpriteInImage(nSkill);
+            string sPath        = DataManage.InitData.instance.GetSkillImagePath(nSkill);
 
             if (nInSprite != 0) Module.SetSpriteImageAll(ImageSkill, sPath, nInSprite);          // 스프라이트 이미지 내에 있는 이미지라면 
             else                Module.SetSpriteImage(ImageSkill, sPath);
@@ -244,7 +244,7 @@ public class TreasureBoxManager : MonoBehaviour
     {
         int nSz = m_ListBox.Count;
 
-        int nSkillSize = ValueManager.instance.GetSkillSize();
+        int nSkillSize = DataManage.InitData.instance.GetSkillSize();
 
         List<int> ArrayCreateSkillCnt = new List<int>();
 

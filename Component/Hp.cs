@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Hp : MonoBehaviour
 {
-    [SerializeField]
-    private float m_fMaxHp;
     private float m_fRemainHp;
 
     private int m_nHpKey = -1;
@@ -13,15 +11,9 @@ public class Hp : MonoBehaviour
     [SerializeField]
     private bool m_bUseHpBar = false;
 
-
-    private void Awake()
-    {
-
-    }
-
     void Start()
     {
-        m_fRemainHp = m_fMaxHp;
+        m_fRemainHp = DataManage.DataManager.instance.MaxHp;
 
         if (m_bUseHpBar == false) return;
         AddHp();
@@ -36,7 +28,7 @@ public class Hp : MonoBehaviour
 
     void AddHp()
     {
-        m_nHpKey = HpBar.instance.AddObject(transform.position, (int)m_fMaxHp, (int)m_fRemainHp, 0, 0.7f);
+        m_nHpKey = HpBar.instance.AddObject(transform.position, (int)DataManage.DataManager.instance.MaxHp, (int)m_fRemainHp, 0, 0.7f);
     }
 
     public void MoveHpBar(Vector3 vPosition)
@@ -49,9 +41,9 @@ public class Hp : MonoBehaviour
         HpBar.instance.ChangeRemainHp(m_nHpKey, (int)m_fRemainHp);
     }
 
-    public void SetMaxHp()
+    public void SetRemainMaxHp()
     {
-        m_fRemainHp = m_fMaxHp;
+        m_fRemainHp = DataManage.DataManager.instance.MaxHp;
     }
 
     public void SetActive(bool flag)
@@ -68,7 +60,7 @@ public class Hp : MonoBehaviour
     public void SetPlusHp(float fPlusHp)
     {
         m_fRemainHp += fPlusHp;
-        m_fRemainHp = Mathf.Min(m_fRemainHp, m_fMaxHp);
+        m_fRemainHp = Mathf.Min(m_fRemainHp, DataManage.DataManager.instance.MaxHp);
     }
 
     public float GetRemainHp()
