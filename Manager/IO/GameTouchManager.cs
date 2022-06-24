@@ -36,7 +36,7 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
     void Start()
     {
         TouchManager.instance.RegisterEvent(this);
-        MouseClickManager.instance.Register(this);
+        MouseClickManager.instance.RegisterEvent(this);
     }
 
     // Update is called once per frame

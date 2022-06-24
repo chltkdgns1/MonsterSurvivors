@@ -329,4 +329,16 @@ public class Module : MonoBehaviour
         if (fHp >= 800) return "<color=#6464FF>" + fHp + "</color>";
         return "<color=white>" + fHp + "</color>";
     }
+
+    static public Vector3 GetGrid(Vector3 position)
+    {
+        float fZpos = position.z;
+        int nXpos = (int)position.x;
+        int nYpos = (int)position.y;
+
+        float fDiffX = position.x - nXpos;
+        float fDiffY = position.y - nYpos;
+
+        return new Vector3(nXpos + (fDiffX >= 0 ? 0.5f : -0.5f), nYpos + (fDiffY >= 0 ? 0.5f : -0.5f), fZpos);
+    }
 }

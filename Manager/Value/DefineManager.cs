@@ -205,6 +205,13 @@ public class DefineManager
         SKILL_REINFORCE
     }
 
+    public enum Crafts
+    {
+        TOWER,
+        STRUCT,
+        TRAP
+    }
+
     public static int ACTIVE_SKILL_SIZE         = 5;
     public static int ACTIVE_SKILL_TYPE_SIZE    = 7;
     public static int ALL_SKILL_TYPE_SIZE       = 14;

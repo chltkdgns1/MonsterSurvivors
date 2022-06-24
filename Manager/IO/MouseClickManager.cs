@@ -14,6 +14,7 @@ public class MouseClickManager : MonoBehaviour
 {
     static public MouseClickManager instance = null;
     private List<IMouseClickInterface> m_registList = new List<IMouseClickInterface>();
+    private List<ITouchCraftManager> m_MouseCraftList = new List<ITouchCraftManager>();
 
     private void Awake()
     {
@@ -26,7 +27,24 @@ public class MouseClickManager : MonoBehaviour
         
     }
 
-    public void Register(IMouseClickInterface regist)
+    public void RegisterEvent(ITouchCraftManager events)
+    {
+        m_MouseCraftList.Add(events);
+    }
+
+    public void DeleteEvent(ITouchCraftManager events)
+    {
+        for (int i = 0; i < m_MouseCraftList.Count; i++)
+        {
+            if (m_MouseCraftList[i] == events)
+            {
+                m_MouseCraftList.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    public void RegisterEvent(IMouseClickInterface regist)
     {
         m_registList.Add(regist);
     }
@@ -55,6 +73,12 @@ public class MouseClickManager : MonoBehaviour
         for (int i = 0; i < sz; i++)
         {
             m_registList[i].OnClickMove(clickPosition);
+        }
+
+        sz = m_MouseCraftList.Count;
+        for (int i = 0; i < sz; i++)
+        {
+            m_MouseCraftList[i].OnOneDrag(clickPosition);
         }
     }
     // Update is called once per frame

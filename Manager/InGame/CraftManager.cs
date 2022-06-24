@@ -9,13 +9,7 @@ public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
 {
     static public CraftManager instance = null;
 
-    [SerializeField]
-    private SubArray [] m_ObPrefabs;
-
-    [SerializeField]
-    private Sprite[] m_sprites;
-
-    private List<List<object>> m_ObCraftObject = new List<List<object>>();
+    private List<List<GameObject>> m_vObList = new List<List<GameObject>>();
 
     private string[] m_ParamData;
 
@@ -45,28 +39,32 @@ public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
 
     public void StartCrafting(string[] param)
     {
-        PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
+
+        if(PlayingGameManager.GetGameState() != DefineManager.GameState.PLAYING_STATE_CRAFTING)
+            PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
+
         m_ParamData = param;
 
         int nGroup = int.Parse(m_ParamData[0]);
         int nType = int.Parse(m_ParamData[1]);
 
-        //m_ObCraftObject[nGroup][nType].SetActive(true);
-        //ITouchCraftManager tempTouch = m_ObCraftObject[nGroup][nType].GetComponent<ITouchCraftManager>();
-        //tempTouch.RegistTouchEvnet();
+        m_vObList[nGroup][nType].SetActive(true);
+        ITouchCraftManager tempTouch = m_vObList[nGroup][nType].GetComponent<ITouchCraftManager>();
+        tempTouch.RegistTouchEvnet();
     }
 
 
     public void EndCrafting()
     {
-        //int nGroup = int.Parse(m_ParamData[0]);
-        //int nType = int.Parse(m_ParamData[1]);
+        int nGroup = int.Parse(m_ParamData[0]);
+        int nType = int.Parse(m_ParamData[1]);
 
-        //ITouchCraftManager tempTouch = m_ObCraftObject[nGroup][nType].GetComponent<ITouchCraftManager>();
-        //tempTouch.DeleteTouchEvent();
-        //m_ObCraftObject[nGroup][nType].SetActive(false);
+        m_vObList[nGroup][nType].SetActive(false);
+        ITouchCraftManager tempTouch = m_vObList[nGroup][nType].GetComponent<ITouchCraftManager>();
+        tempTouch.DeleteTouchEvent();
+        m_vObList[nGroup][nType].SetActive(false);
 
-        //PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
     }
 
     void AwakeInit() // Awake 에서만 초기화
@@ -76,17 +74,32 @@ public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
 
     void InitObject()
     {
-        int nGroupSize = m_ObPrefabs.Length;
-        for(int i = 0; i < nGroupSize; i++)
+        List<DataManage.CraftStructure> tempStructure   = DataManage.InitData.instance.GetStructureList();
+        List<DataManage.CraftTower> tempTower           = DataManage.InitData.instance.GetTowerList();
+        List<DataManage.CraftTrap> tempTrap             = DataManage.InitData.instance.GetTrapList();
+
+        for(int i = 0; i < 3; i++)
         {
-            List<object> tempList = new List<object>();
-            int nSz = m_ObPrefabs[i].m_subArray.Length;
-            for(int k = 0; k < nSz; k++)
-            {
-                tempList.Add(Instantiate(m_ObPrefabs[i].m_subArray[k]));
-                ((GameObject)tempList[k]).SetActive(false);
-            }
-            m_ObCraftObject.Add(tempList);
+            m_vObList.Add(new List<GameObject>());
+        }
+
+
+        for (int i = 0; i < tempTower.Count; i++)
+        {
+            m_vObList[0].Add(Instantiate(tempTower[i].m_ob));
+            m_vObList[0][i].SetActive(false);
+        }
+
+        for (int i = 0; i < tempStructure.Count; i++)
+        {
+            m_vObList[1].Add(Instantiate(tempStructure[i].m_ob));
+            m_vObList[1][i].SetActive(false);
+        }
+
+        for (int i = 0; i < tempTrap.Count; i++)
+        {
+            m_vObList[2].Add(Instantiate(tempTrap[i].m_ob));
+            m_vObList[2][i].SetActive(false);
         }
     }
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Structure : MonoBehaviour, ITouchCraftManager // 실제 설치될 친구
+public class Structure : MonoBehaviour, ITouchCraftManager// 실제 설치될 친구
 {
     private DataManage.CraftStructure m_Structure;
 
@@ -31,6 +31,11 @@ public class Structure : MonoBehaviour, ITouchCraftManager // 실제 설치될 친구
         get { return ReinforceState; }
         set { ReinforceState = value; }
     }
+    public string sName
+    {
+        get { return m_Structure.m_sName; }
+        set { m_Structure.m_sName = value; }
+    }
 
     void Awake()
     {
@@ -49,7 +54,8 @@ public class Structure : MonoBehaviour, ITouchCraftManager // 실제 설치될 친구
 
     public void OnOneDrag(Vector3 touchPoint)
     {
-        transform.position = touchPoint;
+        Vector3 temp = Camera.main.ScreenToWorldPoint(touchPoint);
+        transform.position = Module.GetGrid(new Vector3(temp.x, temp.y, -1));
     }
 
     public void OnManyDrag(List<Vector3> touchPoint)
@@ -70,10 +76,12 @@ public class Structure : MonoBehaviour, ITouchCraftManager // 실제 설치될 친구
     public void RegistTouchEvnet()
     {
         TouchManager.instance.RegisterEvent(this);
+        MouseClickManager.instance.RegisterEvent(this);
     }
 
     public void DeleteTouchEvent()
     {
         TouchManager.instance.DeleteEvent(this);
+        MouseClickManager.instance.DeleteEvent(this);
     }
 }

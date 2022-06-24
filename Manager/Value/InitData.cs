@@ -74,15 +74,22 @@ namespace DataManage
         public float m_fShield;
         public float m_fHp;
         public int m_nPrice;
+        public string m_sName;
+        public Sprite m_sprite;
+        public GameObject m_ob;
 
         public CraftStructure(CraftStructure temp)
         {
             m_fHp = temp.m_fHp;
             m_fShield = temp.m_fShield;
             m_nPrice = temp.m_nPrice;
+            m_sName = temp.m_sName;
+            m_sprite = temp.m_sprite;
+            m_ob = temp.m_ob;
         }
     }
 
+    [System.Serializable]
     public class CraftTower : CraftStructure
     {
         public float m_fMinDamage;
@@ -101,15 +108,28 @@ namespace DataManage
         } 
     }
 
+    [System.Serializable]
+    public class CraftTrap : CraftStructure
+    {
+        public CraftTrap(CraftTrap temp) : base(temp)
+        {
+            
+        }
+    }
+
     public class InitData : MonoBehaviour
     {
         static public InitData instance = null;
+        private List<List<Vector3>> m_vListDirect = new List<List<Vector3>>();
 
         [SerializeField]
         private List<SkillValue> m_SkillData = new List<SkillValue>();
-        private List<List<Vector3>> m_vListDirect = new List<List<Vector3>>();
+        [SerializeField]
         private List<CraftStructure> m_vCraftStructer = new List<CraftStructure>();
+        [SerializeField]
         private List<CraftTower> m_vCraftTower= new List<CraftTower>();
+        [SerializeField]
+        private List<CraftTrap> m_vCraftTrap = new List<CraftTrap>();
 
         private void Awake()
         {
@@ -244,6 +264,21 @@ namespace DataManage
         {
             if (index < 0 || index >= m_vCraftTower.Count) return null;
             return new CraftTower(m_vCraftTower[index]);
+        }
+
+        public List<CraftStructure> GetStructureList()
+        {
+            return m_vCraftStructer;
+        }
+
+        public List<CraftTower> GetTowerList()
+        {
+            return m_vCraftTower;
+        }
+
+        public List<CraftTrap> GetTrapList()
+        {
+            return m_vCraftTrap;
         }
     }
 }

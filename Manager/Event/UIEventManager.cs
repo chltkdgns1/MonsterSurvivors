@@ -166,8 +166,8 @@ public class UIEventManager
         //GameUIManager.instance.SetActiveCraftingList(false);
 
         // 건축물을 여러개 만들 수 있는데 크래프팅 창을 제거할 수 없다.
-
-        CraftManager.instance.StartCrafting(value.GetParameter());
+        string[] param = value.GetParameter();
+        CraftManager.instance.StartCrafting(param);
     }
 
     static private void CraftOrderSelect(CommunicationTypeDataClass value)
