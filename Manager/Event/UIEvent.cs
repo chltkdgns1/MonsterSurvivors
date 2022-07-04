@@ -9,21 +9,21 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
 {
     // Start is called before the first frame update
     [SerializeField]
-    private int m_nId;
+    protected int m_nId;
 
     [SerializeField]
-    private bool m_bSendObject;
+    protected bool m_bSendObject;
 
     [SerializeField]
-    private int m_nOption = 7; // 모든 기능 다 사용함.
+    protected int m_nOption = 7; // 모든 기능 다 사용함.
 
     [SerializeField]
-    private string[] parameter;
+    protected string[] parameter;
 
-    private CommunicationTypeDataClass m_value;
+    protected CommunicationTypeDataClass m_value;
 
-    private GameObject m_obParent;
-    private GameObject m_obMine = null;
+    protected GameObject m_obParent;
+    protected GameObject m_obMine = null;
 
     private void Awake()
     {
@@ -36,7 +36,7 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
       
     }
 
-    void initCommunicateValue()
+    protected void initCommunicateValue()
     {
         m_value = new CommunicationTypeDataClass(m_nId, m_obMine, parameter);
     }
@@ -51,21 +51,22 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
         m_obParent = parent;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public virtual void OnPointerClick(PointerEventData eventData)
     {
         if ((m_nOption & DefineManager.POINTER_CLICK) != DefineManager.POINTER_CLICK) return;
         UIEventManager.OnClickEvent(m_value);   
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public virtual void OnPointerUp(PointerEventData eventData)
     {
         if ((m_nOption & DefineManager.POINTER_UP) != DefineManager.POINTER_UP) return;
         UIEventManager.OnClickUpEvent(m_value);   
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public virtual void OnPointerDown(PointerEventData eventData)
     {
         if ((m_nOption & DefineManager.POINTER_DOWN) != DefineManager.POINTER_DOWN) return;
         UIEventManager.OnClickDownEvent(m_value);  
     }
 }
+

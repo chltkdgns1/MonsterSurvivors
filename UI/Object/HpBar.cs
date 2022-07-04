@@ -145,4 +145,20 @@ public class HpBar : MonoBehaviour
         HpBarStruct temp = m_DicManager[key];
         temp.m_hpBar.transform.position = m_cam.WorldToScreenPoint(position + new Vector3(temp.m_fXpos, temp.m_fYpos, temp.m_fZpos));
     }
+
+    public void OffAll()
+    {
+        foreach(HpBarStruct temp in m_DicManager.Values)
+        {
+            temp.m_hpBar.SetActive(false);
+        }
+    }
+
+    public void OnAll()
+    {
+        foreach (HpBarStruct temp in m_DicManager.Values)
+        {
+            temp.m_hpBar.SetActive(true);
+        }
+    }
 }

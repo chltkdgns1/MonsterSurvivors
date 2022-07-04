@@ -341,4 +341,9 @@ public class Module : MonoBehaviour
 
         return new Vector3(nXpos + (fDiffX >= 0 ? 0.5f : -0.5f), nYpos + (fDiffY >= 0 ? 0.5f : -0.5f), fZpos);
     }
+
+    static public Vector3 ReversePosition(Vector3 vCenter, Vector3 vDir)
+    {
+        return 2 * vCenter - vDir;
+    }
 }

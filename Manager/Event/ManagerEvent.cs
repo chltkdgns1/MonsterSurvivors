@@ -15,7 +15,6 @@ public interface ITouchManagerEvent
     // 드래그는 first Point 에 한해서만 입력 받음.
     void OnFirstTouch(Vector3 touchPoint);
     void OnFirstTouchDrag(Vector3 touchPoint);
-    void OnOtherTouch(List<TouchCircle> touchPoint);
     void OnFirstTouchEnd();
 }
 
@@ -28,10 +27,18 @@ public interface ITouchGameEvent
     void OnSkill(List<TouchCircle> skills);
 }
 
-public interface ITouchCraftManager
+public interface IDoubleTouch
 {
-    void OnOneDrag(Vector3 touchPoint);
-    void OnManyDrag(List<Vector3> touchPoint);
+    bool IsInsideRange(Vector3 vFirst, Vector3 vSecond);
+}
+
+public interface ITouchCraftManager : IDoubleTouch
+{
+    //void OnOneTouch(Vector3 touchPoint);
+    void OnDoubleTouch(Vector3 doubleTouchPoint);
+    void OnDrag(Vector3 firstTouch, Vector3 touchPoint);
+    void OnZoom(Vector3 zoomPoint);
+    //void OnManyDrag(List<Vector3> touchPoint);
     void RegistTouchEvnet();
     void DeleteTouchEvent();
 }

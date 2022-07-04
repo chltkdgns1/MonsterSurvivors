@@ -166,6 +166,9 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
 
     static public void PrintCraftingList(CommunicationTypeDataClass value)
     {
+        CraftManager.instance.RegistTouchEvnet();
+        HpBar.instance.OffAll();
+        CameraManager.instance.FollowFlag = false; 
         PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(true);
         DrawGrid.instance.SetActive(true);

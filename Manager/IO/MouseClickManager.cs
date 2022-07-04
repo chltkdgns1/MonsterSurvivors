@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.EventSystems;
 public interface IMouseClickInterface
 {
     void OnClick(Vector3 clickPosition);
@@ -15,6 +15,8 @@ public class MouseClickManager : MonoBehaviour
     static public MouseClickManager instance = null;
     private List<IMouseClickInterface> m_registList = new List<IMouseClickInterface>();
     private List<ITouchCraftManager> m_MouseCraftList = new List<ITouchCraftManager>();
+
+    private Vector3? m_vFirstClick = null;
 
     private void Awake()
     {
@@ -51,6 +53,8 @@ public class MouseClickManager : MonoBehaviour
 
     void SendClick(Vector3 clickPosition)
     {
+        OnCraftDoubleClick(clickPosition);
+
         int sz = m_registList.Count;
         for (int i = 0; i < sz; i++)
         {
@@ -78,7 +82,7 @@ public class MouseClickManager : MonoBehaviour
         sz = m_MouseCraftList.Count;
         for (int i = 0; i < sz; i++)
         {
-            m_MouseCraftList[i].OnOneDrag(clickPosition);
+            m_MouseCraftList[i].OnDrag(m_vFirstClick ?? clickPosition, clickPosition);
         }
     }
     // Update is called once per frame
@@ -89,11 +93,36 @@ public class MouseClickManager : MonoBehaviour
         bool bClickMove = Input.GetMouseButton(0);
 
         if (bClickUp == true)
+        {
+            m_vFirstClick = Input.mousePosition; // 마우스를 뗐을 위치를 더블클릭의 첫번째 위치로 설정
             SendClickUp(Input.mousePosition);
+        }
         else if (bClick == true)
+        {
+            if (EventSystem.current.IsPointerOverGameObject() == true)
+                return;
             SendClick(Input.mousePosition);
+            m_vFirstClick = Input.mousePosition; // 마우스 첫 터치를 더블클릭의 첫번째 위치로 선정
+        }
         else if (bClickMove == true)
+        {
+            if (EventSystem.current.IsPointerOverGameObject() == true)
+                return;
             SendClickMove(Input.mousePosition);
+        }
+    }
 
+    void OnCraftDoubleClick(Vector3 vPosition)
+    {
+        if (m_vFirstClick == null) return;
+
+        int mSize = m_MouseCraftList.Count;
+        for (int i = 0; i < mSize; i++)
+        {
+            if (m_MouseCraftList[i].IsInsideRange(m_vFirstClick.Value, vPosition))
+            {
+                m_MouseCraftList[i].OnDoubleTouch(vPosition);
+            }
+        }
     }
 }

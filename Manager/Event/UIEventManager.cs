@@ -148,6 +148,9 @@ public class UIEventManager
 
     static private void PrintCraftingList(CommunicationTypeDataClass value)
     {
+        CraftManager.instance.RegistTouchEvnet();
+        HpBar.instance.OffAll();
+        CameraManager.instance.FollowFlag = false;
         PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(true);
         DrawGrid.instance.SetActive(true);
@@ -155,6 +158,9 @@ public class UIEventManager
 
     static private void UnPrintCraftingList(CommunicationTypeDataClass value)
     {
+        CraftManager.instance.DeleteTouchEvent();
+        HpBar.instance.OnAll();
+        CameraManager.instance.FollowFlag = true;
         PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
         GameUIManager.instance.SetActiveCraftingList(false);
         DrawGrid.instance.SetActive(false);

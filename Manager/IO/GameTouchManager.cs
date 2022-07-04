@@ -20,7 +20,7 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
 
     private List<ITouchGameEvent> m_touchList = new List<ITouchGameEvent>();
 
-    private bool m_bMouseUseState = false;
+    //private bool m_bMouseUseState = false;
 
     public void RegisterEvent(ITouchGameEvent events)
     {
@@ -93,7 +93,7 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
     {
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
 
-        if (m_bMouseUseState) return;
+        //if (m_bMouseUseState) return;
         GameUIManager.instance.SetActiveTouchPad(false);
         SendStopPosition();
     }
@@ -103,7 +103,7 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE)       return;
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING)    return;
 
-        m_bMouseUseState = true;
+        //m_bMouseUseState = true;
         m_vFirstPosition = clickPosition;
         CreateTouchPad(clickPosition);
     }
@@ -118,7 +118,7 @@ public class GameTouchManager : MonoBehaviour, ITouchManagerEvent, IMouseClickIn
     {
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
 
-        m_bMouseUseState = false;
+        //m_bMouseUseState = false;
         GameUIManager.instance.SetActiveTouchPad(false);
         SendStopPosition();
     }

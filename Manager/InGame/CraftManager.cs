@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
-public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
+public class CraftManager : MonoBehaviour, ITouchCraftManager  // 크래프팅에 관련된 것들만 처리함.
 {
     static public CraftManager instance = null;
 
     private List<List<GameObject>> m_vObList = new List<List<GameObject>>();
+    private List<List<GameObject>> m_vObjectPool = new List<List<GameObject>>();
+
+    //private List<List<List<GameObject>>> m_vObRealList = new List<List<List<GameObject>>>(); // 실질적으로 생성될 게임 오브젝트
 
     private string[] m_ParamData;
 
@@ -39,8 +39,8 @@ public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
 
     public void StartCrafting(string[] param)
     {
-
-        if(PlayingGameManager.GetGameState() != DefineManager.GameState.PLAYING_STATE_CRAFTING)
+        //RegistTouchEvnet();
+        if (PlayingGameManager.GetGameState() != DefineManager.GameState.PLAYING_STATE_CRAFTING)
             PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
 
         m_ParamData = param;
@@ -49,21 +49,17 @@ public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
         int nType = int.Parse(m_ParamData[1]);
 
         m_vObList[nGroup][nType].SetActive(true);
-        ITouchCraftManager tempTouch = m_vObList[nGroup][nType].GetComponent<ITouchCraftManager>();
-        tempTouch.RegistTouchEvnet();
     }
 
 
     public void EndCrafting()
     {
+        //DeleteTouchEvent();
         int nGroup = int.Parse(m_ParamData[0]);
         int nType = int.Parse(m_ParamData[1]);
+        m_ParamData = null;
 
         m_vObList[nGroup][nType].SetActive(false);
-        ITouchCraftManager tempTouch = m_vObList[nGroup][nType].GetComponent<ITouchCraftManager>();
-        tempTouch.DeleteTouchEvent();
-        m_vObList[nGroup][nType].SetActive(false);
-
         PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_CRAFTING);
     }
 
@@ -117,4 +113,75 @@ public class CraftManager : MonoBehaviour  // 크래프팅에 관련된 것들만 처리함.
     {
 
     }
+
+    public void OnDrag(Vector3 firstTouch, Vector3 touchPoint)
+    {
+        Vector3 first = Camera.main.ScreenToWorldPoint(firstTouch);
+        Vector3 second = Camera.main.ScreenToWorldPoint(touchPoint);
+        CameraManager.instance.MoveCamera(first - second);
+
+        //if (m_ParamData == null) return;
+
+        //int nGroup = int.Parse(m_ParamData[0]);
+        //int nType = int.Parse(m_ParamData[1]);
+
+        //Vector3 temp = Camera.main.ScreenToWorldPoint(touchPoint);
+        //m_vObList[nGroup][nType].transform.position = Module.GetGrid(new Vector3(temp.x, temp.y, -1));
+
+    }
+
+    //public void OnManyDrag(List<Vector3> touchPoint)
+    //{
+    //    //Vector3 maxYPosition = touchPoint[0];
+    //    //Vector3 minYPosition = touchPoint[1];
+    //    //if (touchPoint[0].y < touchPoint[1].y)
+    //    //{
+    //    //    Vector3 temp = maxYPosition;
+    //    //    maxYPosition = minYPosition;
+    //    //    minYPosition = temp;
+    //    //}
+
+    //    //Vector2 vDir = maxYPosition - minYPosition;
+    //    //transform.Rotate(new Vector3(0, 0, Module.GetAngle(vDir, new Vector3(1, 0))));
+    //}
+
+    public void RegistTouchEvnet()
+    {
+        TouchManager.instance.RegisterEvent(this);
+        MouseClickManager.instance.RegisterEvent(this);
+    }
+
+    public void DeleteTouchEvent()
+    {
+        TouchManager.instance.DeleteEvent(this);
+        MouseClickManager.instance.DeleteEvent(this);
+    }
+
+    public void OnDoubleTouch(Vector3 doubleTouchPoint)
+    {
+        if (m_ParamData == null) return;
+
+        int nGroup = int.Parse(m_ParamData[0]);
+        int nType = int.Parse(m_ParamData[1]);
+
+        Vector3 temp = Camera.main.ScreenToWorldPoint(doubleTouchPoint);
+        m_vObList[nGroup][nType].transform.position = Module.GetGrid(new Vector3(temp.x, temp.y, -1));
+    }
+
+    public void OnZoom(Vector3 zoomPoint)
+    {
+
+    }
+
+    public bool IsInsideRange(Vector3 vFirst, Vector3 vSecond)
+    {
+        Vector3 first = Module.GetGrid(Camera.main.ScreenToWorldPoint(vFirst));
+        Vector3 second = Module.GetGrid(Camera.main.ScreenToWorldPoint(vSecond));
+
+        if (Mathf.Abs(first.x - second.x) < 0.001f && Mathf.Abs(first.y - second.y) < 0.001f)
+            return true;
+        return false;
+    }
+
+
 }
