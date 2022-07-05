@@ -205,12 +205,7 @@ public class DefineManager
         SKILL_REINFORCE
     }
 
-    public enum Crafts
-    {
-        TOWER,
-        STRUCT,
-        TRAP
-    }
+
 
     public static int ACTIVE_SKILL_SIZE         = 5;
     public static int ACTIVE_SKILL_TYPE_SIZE    = 7;
@@ -225,6 +220,18 @@ public class DefineManager
     public static int BOX_3                     = 7;
     public static int BOX_4                     = 8;
     public static int BOX_5                     = 9;
+
+
+    public static int CRAFT_TYPE = 3;       // 현재까지 구현된 크래프트 개수 ( 타워, 지뢰, 건물)
+
+    public enum Crafts
+    {
+        TOWER,
+        STRUCT,
+        TRAP
+    }
+
+    public static float DOUBLE_CLICK_TILE = 0.3f;
 }
 
 

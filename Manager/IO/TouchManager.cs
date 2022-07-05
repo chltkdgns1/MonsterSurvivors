@@ -32,6 +32,12 @@ public class TouchManager : MonoBehaviour
     private int m_nFirstIndex = DefineManager.INIT;
     private Vector3 m_vFirstPosition;
     private Vector3? m_vFirstDragPosition = null;
+    private Vector3? m_vDoubleTouch = null;
+
+    private float m_fDoubleTouchTime = DefineManager.DOUBLE_CLICK_TILE;
+
+    private List<Vector3> m_ZoomPosition = new List<Vector3>();
+    private float? m_fZoomDist = null;
  
     private void Awake()
     {
@@ -93,6 +99,17 @@ public class TouchManager : MonoBehaviour
     {
         //if (PlayingGameManager.GetGameState() == DefineManager.PLAYING_STATE_PAUSE) return;
 
+
+        if (m_vDoubleTouch != null)
+        {
+            m_fDoubleTouchTime -= Time.deltaTime;
+            if (m_fDoubleTouchTime <= 0f)
+            {
+                m_fDoubleTouchTime = DefineManager.DOUBLE_CLICK_TILE;
+                m_vDoubleTouch = null;
+            }
+        }
+
         if (Input.touchCount > 0) DivideTouchType();
         
         //else
@@ -120,6 +137,9 @@ public class TouchManager : MonoBehaviour
                 case TouchPhase.Canceled    : TouchEnd(i);              break;                  // 터치가 5개 이상 입력되어 추적을 취소함.
             }
         }
+
+
+
     }
 
     void SendFirstTouch()
@@ -151,6 +171,7 @@ public class TouchManager : MonoBehaviour
             m_nFirstIndex = index;
             m_vFirstPosition = Input.GetTouch(index).position;
 
+            OnCraftOneTouch(m_vFirstPosition);
             OnCraftDoubleTouch(m_vFirstPosition);
 
             m_vFirstDragPosition = m_vFirstPosition;
@@ -167,6 +188,9 @@ public class TouchManager : MonoBehaviour
             SendFirstMoveTouch();
             SetCraftTouch();
         }
+
+        if(m_ZoomPosition.Count < 2)
+            m_ZoomPosition.Add(Input.GetTouch(index).position);
         // 첫 번째 터치 빼고는 움직이고 있는 것을 거른다. 
     }
 
@@ -194,13 +218,46 @@ public class TouchManager : MonoBehaviour
 
     void OnCraftDoubleTouch(Vector3 vPosition)
     {
+        if(m_vDoubleTouch == null)
+        {
+            m_fDoubleTouchTime = DefineManager.DOUBLE_CLICK_TILE;
+            m_vDoubleTouch = vPosition;
+            return;
+        }
+
         for (int i = 0; i < m_touchCraftList.Count; i++)
         {
-            if (m_touchCraftList[i].IsInsideRange(m_vFirstDragPosition ?? vPosition, vPosition))
+            if (m_touchCraftList[i].IsInsideRange(m_vDoubleTouch.Value, vPosition))
             {
                 m_touchCraftList[i].OnDoubleTouch(vPosition);
             }
         }
+        m_fDoubleTouchTime = DefineManager.DOUBLE_CLICK_TILE;
+        m_vDoubleTouch = null;
+    }
+
+    void OnCraftOneTouch(Vector3 vPosition)
+    {
+        for (int i = 0; i < m_touchCraftList.Count; i++)
+        {
+            m_touchCraftList[i].OnOneTouch(vPosition);
+        }
+    }
+
+    void OnCraftZoom()
+    {
+        int sz = m_ZoomPosition.Count;
+        if (sz < 2) {
+            m_fZoomDist = null;
+            return;
+        }
+
+        if (m_fZoomDist != null) { 
+            float fTempDist = Vector3.Distance(m_ZoomPosition[0], m_ZoomPosition[1]);
+            for (int i = 0; i < m_touchCraftList.Count; i++)
+                m_touchCraftList[i].OnZoom(fTempDist - m_fZoomDist.Value);        
+        }
+        m_fZoomDist = Vector3.Distance(m_ZoomPosition[0], m_ZoomPosition[1]);
     }
 }
 

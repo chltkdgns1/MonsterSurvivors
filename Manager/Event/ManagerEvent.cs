@@ -34,10 +34,10 @@ public interface IDoubleTouch
 
 public interface ITouchCraftManager : IDoubleTouch
 {
-    //void OnOneTouch(Vector3 touchPoint);
+    void OnOneTouch(Vector3 touchPoint);
     void OnDoubleTouch(Vector3 doubleTouchPoint);
     void OnDrag(Vector3 firstTouch, Vector3 touchPoint);
-    void OnZoom(Vector3 zoomPoint);
+    void OnZoom(float fWheel);
     //void OnManyDrag(List<Vector3> touchPoint);
     void RegistTouchEvnet();
     void DeleteTouchEvent();
