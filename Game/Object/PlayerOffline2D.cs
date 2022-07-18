@@ -285,8 +285,8 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     void SetLeftRight(Vector3 targetPosition)
     {
         if (transform.position.x == targetPosition.x) return;                                 // x 가 같으면 현상태 유지함.
-        else if (transform.position.x < targetPosition.x) ChangeRotate(DefineManager.RIGHT);
-        else ChangeRotate(DefineManager.LEFT);
+        else if (transform.position.x < targetPosition.x) Module.ChangeRotate(transform, DefineManager.RIGHT);
+        else Module.ChangeRotate(transform, DefineManager.LEFT);
     }
 
     void Start()
@@ -452,22 +452,26 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     public Vector3 GetPosition()    { return transform.position;    }
     public Transform GetTransform() { return transform;             }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_NO_ENEMY) return;
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
 
-        if (collision.CompareTag("Monster"))
+        Vector3 tempPos = (transform.position - collision.transform.position) * 0.001f;
+        transform.position += new Vector3(tempPos.x, tempPos.y, 0f);
+        SetCollisionState();
+
+        if (collision.collider.CompareTag("Monster"))
         {
             m_lDamageTime = DateTime.Now.Ticks;
-            IDamage temp = collision.GetComponent<IDamage>();
+            IDamage temp = collision.collider.GetComponent<IDamage>();
             DamagedMonster(temp);
         }
 
-        if (collision.CompareTag("ThrowAttack"))
+        if (collision.collider.CompareTag("ThrowAttack"))
         {
-            IDamage temp = collision.GetComponent<IDamage>();
+            IDamage temp = collision.collider.GetComponent<IDamage>();
             DamagedMonster(temp);
         }
 
@@ -480,18 +484,18 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
         //StartCoroutine(CheckEndGame());
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_PAUSE) return;
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_NO_ENEMY) return;
         if (PlayingGameManager.GetGameState() == DefineManager.GameState.PLAYING_STATE_CRAFTING) return;
 
-        if (collision.CompareTag("Monster"))
+        if (collision.collider.CompareTag("Monster"))
         {
             if (DateTime.Now.Ticks - m_lDamageTime >= 1000000)
             {
                 m_lDamageTime = DateTime.Now.Ticks;
-                IDamage temp = collision.GetComponent<IDamage>();
+                IDamage temp = collision.collider.GetComponent<IDamage>();
                 DamagedMonster(temp);
             }
         }
@@ -539,29 +543,10 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     public void ExitGame()
     {
         gameObject.SetActive(false);
-
         m_Hp.SetActive(false);
-        //HpBar.instance.ChangeActive(m_nHpKey, false);
-
-        GameUIManager.instance.SetGameOverFunc(() =>
-        {
-            GameUIManager.instance.SetActiveEndGame(true);
-            GameUIManager.instance.SetActiveGameOver(false);
-        });
-        GameUIManager.instance.SetActiveGameOver(true);
-
-        //GameUIManager.instance.SetActiveEndGame(true);
-
-        //string[] param = { "StartScene", "0", "PlayGameLobbyMove", "2" };
-        //UIClickStartManager.LoadScene(new CommunicationTypeDataClass(0, null, param));
+        PlayGameMananger.instance.ExitGame();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        transform.position += (transform.position - m_targetPosition) * 0.001f;
-        SetCollisionState();
-    }
-  
     public bool IsDead()         { return m_bIsDead;            }
 
     public void OnTargetPosition(Vector3 position)
@@ -577,29 +562,6 @@ public class PlayerOffline2D : MonoBehaviour, ITouchGameEvent
     public void OnStop()
     {
         SetClicked(transform.position, true);
-    }
-
-    void ChangeRotate(bool flg)
-    {  
-        Vector3 tmp = transform.localScale;
-        if (flg == false)   tmp.x = Mathf.Abs(tmp.x);   
-        else                tmp.x = -Mathf.Abs(tmp.x);
-        transform.localScale = tmp;
-    }
-
-    public void AddEx(int nEx)
-    {
-        DataManage.DataManager.instance.Exe += nEx;
-
-        int maxEx = DataManage.ValueManager.instance.GetLevelEx(DataManage.DataManager.instance.Level);
-        if(DataManage.DataManager.instance.Exe >= maxEx)
-        {
-            DataManage.DataManager.instance.Exe %= maxEx;
-            DataManage.DataManager.instance.Level++;           // 레벨 증가
-            GameUIManager.instance.PlayerLevelUp(); // 레벨업 해줌
-            // 레벨업 UI 출력
-        }
-
     }
 
     public void OnSkill(List<TouchCircle> skills) { }

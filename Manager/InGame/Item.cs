@@ -57,7 +57,7 @@ public class Item : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             if (m_nItemType <= 4)
-                PlayerOffline2D.instance.AddEx(m_nEx);
+                PlayGameMananger.instance.AddEx(m_nEx);
 
             else if (m_nItemType <= 9)
                 GameUIManager.instance.GetTreasureBox(m_nItemType - 5, m_bAd);

@@ -26,5 +26,29 @@ public class PlayGameMananger : MonoBehaviour
         DataManage.DataManager.instance.InGameGold = 0;
     }
 
+    public void AddEx(int nEx)
+    {
+        DataManage.DataManager.instance.Exe += nEx;
+
+        int maxEx = DataManage.ValueManager.instance.GetLevelEx(DataManage.DataManager.instance.Level);
+        if (DataManage.DataManager.instance.Exe >= maxEx)
+        {
+            DataManage.DataManager.instance.Exe %= maxEx;
+            DataManage.DataManager.instance.Level++;           // 레벨 증가
+            GameUIManager.instance.PlayerLevelUp(); // 레벨업 해줌
+            // 레벨업 UI 출력
+        }
+    }
+
+    public void ExitGame()
+    {
+        GameUIManager.instance.SetGameOverFunc(() =>
+        {
+            GameUIManager.instance.SetActiveEndGame(true);
+            GameUIManager.instance.SetActiveGameOver(false);
+        });
+        GameUIManager.instance.SetActiveGameOver(true);
+    }
+
     // Update is called once per frame
 }

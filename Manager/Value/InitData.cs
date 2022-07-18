@@ -39,13 +39,13 @@ namespace DataManage
     [System.Serializable]
     public struct SkillFileValue
     {     
-        readonly public int m_nSkillInSpirteImage;
-        readonly public int m_nSkillLimitCount;                   // 스킬 최대 사이즈
-        readonly public bool m_bSkillActive;
-        readonly public bool m_bFollowPlayerSkill;
-        readonly public string m_sSkillImagePath;
-        readonly public string m_sSkillName;
-        readonly public string m_sSkillComment;
+        public int m_nSkillInSpirteImage;
+        public int m_nSkillLimitCount;                   // 스킬 최대 사이즈
+        public bool m_bSkillActive;
+        public bool m_bFollowPlayerSkill;
+        public string m_sSkillImagePath;
+        public string m_sSkillName;
+        public string m_sSkillComment;
     }
 
     [System.Serializable]

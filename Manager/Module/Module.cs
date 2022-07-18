@@ -26,6 +26,14 @@ public class Module : MonoBehaviour
         ob.transform.localScale = tmp;
     }
 
+    static public void ChangeRotate(Transform transform, bool flg)
+    {
+        Vector3 tmp = transform.localScale;
+        if (flg == false) tmp.x = Mathf.Abs(tmp.x);
+        else tmp.x = -Mathf.Abs(tmp.x);
+        transform.localScale = tmp;
+    }
+
     static public Vector3 GetZAxisRandomRatation()
     {
         return new Vector3(0,0,1) * UnityEngine.Random.Range(0, 360);
