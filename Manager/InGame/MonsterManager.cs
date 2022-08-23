@@ -7,6 +7,7 @@ public class MonsterManager : MonoBehaviour
     static public MonsterManager instance = null;
 
     private List<GameObject> m_ObMonster = new List<GameObject>();      // 몬스터 게임 오브젝트를 관리할 친구
+    private List<float> m_RadList = new List<float>();
     private List<float> m_fMonsterRePrintTime = new List<float>();
 
     [SerializeField]
@@ -74,6 +75,10 @@ public class MonsterManager : MonoBehaviour
         }
 
         tempComp.SetKey(m_nKey++);
+
+        float fRad = tempOb.GetComponent<CircleCollider2D>().radius;
+
+        m_RadList.Add(fRad);
         m_ObMonster.Add(tempOb);
         m_fMonsterRePrintTime.Add(fRePrintTime);
     }

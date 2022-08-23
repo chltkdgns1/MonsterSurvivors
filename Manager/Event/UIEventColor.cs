@@ -15,6 +15,8 @@ public class UIEventColor : UIEvent
 
     private Image m_Image = null;
 
+    //private 
+
     private void Awake()
     {
         m_obParent = null;
@@ -30,13 +32,14 @@ public class UIEventColor : UIEvent
 
     public override void OnPointerUp(PointerEventData eventData)
     {
-        SetColor(true);
+        //SetColor(true);
         base.OnPointerUp(eventData);
     }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        SetColor(false);
+        //SetColor(false);
+        CraftUIManager.instance.OnGroupElement(this);
         base.OnPointerDown(eventData);
     }
 
@@ -45,7 +48,7 @@ public class UIEventColor : UIEvent
         base.OnPointerClick(eventData);
     }
 
-    void SetColor(bool flag)
+    public void SetColor(bool flag)
     {
         if (m_Image == null) return;
         if (flag == false)  m_Image.color = m_ClickColor;

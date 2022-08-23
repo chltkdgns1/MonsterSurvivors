@@ -41,6 +41,8 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
         m_startFunc[25] = CraftOrderSelect;
         m_startFunc[26] = CraftComplete;
         m_startFunc[27] = CraftCancle;
+        m_startFunc[28] = CraftDeleteCancle;
+        m_startFunc[29] = CraftCameraPos;
 
         m_startFunc[199] = TestCode;
 
@@ -213,5 +215,16 @@ public class UIClickStartManager            // UI 가 클릭 한 후에 다음 실행 될 �
     static public void CraftCancle(CommunicationTypeDataClass value)
     {
         CraftManager.instance.CancleCrafting();
+    }
+
+    static public void CraftDeleteCancle(CommunicationTypeDataClass value)
+    {
+        PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
+        GameUIManager.instance.SetActiveCraftDelete(false);
+    }
+
+    static public void CraftCameraPos(CommunicationTypeDataClass value)
+    {
+        CraftManager.instance.SetInitCameraPos();
     }
 }

@@ -8,11 +8,14 @@ struct CraftData
     public int m_nType;
     public int m_nIndex;
 
-    public CraftData(int nGroup, int nType, int nIndex)
+    public Vector3 m_position;
+
+    public CraftData(int nGroup, int nType, int nIndex, Vector3 position)
     {
         m_nGroup = nGroup;
         m_nType = nType;
         m_nIndex = nIndex;
+        m_position = position;
     }
 }
 
@@ -262,7 +265,7 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
 
     void StartInit() // Start ¿¡¼­¸¸ ÃÊ±âÈ­
     {
-      
+
     }
 
     void ReInit() // ÄÚµå ·ÎÁ÷ Áß¿¡ ÃÊ±âÈ­ ÇÊ¿äÇÑ °æ¿ì
@@ -272,12 +275,12 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
 
     public void OnOneTouch(Vector3 touchPoint)
     {
-        // Á¸ÀçÇÏ´Â Å¸¿ö¸¦ Á¦°ÅÇÑ´Ù.
-        Vector3Int vGridPosition = Module.GetGridInt(Camera.main.ScreenToWorldPoint(touchPoint));
-        long key = vGridPosition.x * 10000 + vGridPosition.y;
+        //Vector3Int vGridPosition = Module.GetGridInt(Camera.main.ScreenToWorldPoint(touchPoint));
+        //long key = vGridPosition.x * 10000 + vGridPosition.y;
+        long key = Module.GetHashFunc(Camera.main.ScreenToWorldPoint(touchPoint));
 
         if (m_TemporaryDic.ContainsKey(key))
-        {        
+        {
             CraftData temp = m_TemporaryDic[key];
             Debug.Log("»èÁ¦ : " + key);
             Debug.Log("temp : " + temp.m_nGroup + " " + temp.m_nType + "  " + temp.m_nIndex);
@@ -287,10 +290,23 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
             return;
         }
 
-        //if (m_DicMap.ContainsKey(key))
-        //{
+        if (m_DicMap.ContainsKey(key))
+        {
+            CraftData temp = m_DicMap[key];
+            GameUIManager.instance.SetActiveCraftDelete(true);
 
-        //}
+            PlayingGameManager.SetGameState(DefineManager.GameState.PLAYING_STATE_PAUSE);
+
+            GameUIManager.instance.SetCraftDeleteOkCallBack((CommunicationTypeDataClass value) =>
+            {
+                string sValue = value.GetParamIndex(0);
+                m_DicMap.Remove(long.Parse(sValue));
+                value.GetGameObject().SetActive(false);
+                value.GetGameObject().GetComponent<GlitterEffect>().Register();
+                GameUIManager.instance.SetActiveCraftDelete(false);
+                PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
+            }, new CommunicationTypeDataClass(0, m_CraftObjectPool[temp.m_nGroup].m_CraftObject[temp.m_nType].m_CraftElement[temp.m_nIndex].m_object, new string[] { key.ToString() }));
+        }
     }
 
     public void OnDrag(Vector3 firstTouch, Vector3 touchPoint)
@@ -298,6 +314,12 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
         Vector3 first = Camera.main.ScreenToWorldPoint(firstTouch);
         Vector3 second = Camera.main.ScreenToWorldPoint(touchPoint);
         CameraManager.instance.MoveCamera(first - second);
+    }
+
+    public void SetInitCameraPos()
+    {
+        Vector3 tempPos = PlayerOffline2D.instance.gameObject.transform.position;
+        CameraManager.instance.SetPositionXY(tempPos);       
     }
 
     public void RegistTouchEvnet()
@@ -315,20 +337,26 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
     public void OnDoubleTouch(Vector3 doubleTouchPoint)
     {
         if (m_ParamData == null) return;
+        CreateCraft(doubleTouchPoint);
+    }
 
+    void CreateCraft(Vector3 touchPoint)
+    {
         int nGroup = int.Parse(m_ParamData[0]);
         int nType = int.Parse(m_ParamData[1]);
 
-        Vector3 temp = Camera.main.ScreenToWorldPoint(doubleTouchPoint);
+        Vector3 temp = Camera.main.ScreenToWorldPoint(touchPoint);
+        long key = Module.GetHashFunc(temp);
 
-        Vector3Int vGridPosition = Module.GetGridInt(temp);
-        long key = vGridPosition.x * 10000 + vGridPosition.y;
+        //Vector3 temp = Camera.main.ScreenToWorldPoint(touchPoint);
+        //Vector3Int vGridPosition = Module.GetGridInt(Camera.main.ScreenToWorldPoint(touchPoint));
+        //long key = vGridPosition.x * 10000 + vGridPosition.y;
 
         if (m_DicMap.ContainsKey(key) || m_TemporaryDic.ContainsKey(key)) return;
 
         temp = new Vector3(temp.x, temp.y, -1);
         int index = m_CraftObjectPool[nGroup].m_CraftObject[nType].SetActive(Module.GetGrid(temp), key);
-        m_TemporaryDic.Add(key, new CraftData(nGroup, nType, index));
+        m_TemporaryDic.Add(key, new CraftData(nGroup, nType, index, Module.GetGrid(temp)));
     }
 
     public void OnZoom(float fWheel)

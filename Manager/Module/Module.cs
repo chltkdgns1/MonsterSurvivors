@@ -352,8 +352,30 @@ public class Module : MonoBehaviour
 
     static public Vector3Int GetGridInt(Vector3 position)
     {
-        Vector3 temp = GetGrid(position);
-        return new Vector3Int((int)(temp.x + 10000f), (int)(temp.y + 10000f), (int)temp.z);
+        //Vector3 temp = GetGrid(position);
+        //return new Vector3Int((int)(temp.x + 10000f), (int)(temp.y + 10000f), (int)temp.z);
+        float fZpos = position.z;
+        int nXpos = (int)position.x;
+        int nYpos = (int)position.y;
+
+        float fDiffX = position.x - nXpos;
+        float fDiffY = position.y - nYpos;
+
+        return new Vector3Int(nXpos + (fDiffX >= 0 ? 1 : 0), nYpos + (fDiffY >= 0 ? 1 : 0), (int)fZpos);
+    }
+
+    static public long GetHashFunc(Vector3 position)
+    {
+        float fZpos = position.z;
+        int nXpos = (int)position.x;
+        int nYpos = (int)position.y;
+
+        float fDiffX = position.x - nXpos;
+        float fDiffY = position.y - nYpos;
+
+        nXpos += (fDiffX >= 0f ? 1 : 0);
+        nYpos += (fDiffY >= 0f ? 1 : 0);
+        return nXpos * 1000000 + nYpos;
     }
 
     static public Vector3 ReversePosition(Vector3 vCenter, Vector3 vDir)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-
+public delegate void EventCallBack(CommunicationTypeDataClass value);
 
 public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPointerDownHandler
 {
@@ -25,6 +25,13 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
     protected GameObject m_obParent;
     protected GameObject m_obMine = null;
 
+    private event EventCallBack m_eventCallBack = null;
+
+    public EventCallBack EventCallBack
+    {
+        set { m_eventCallBack = value; }
+    }
+
     private void Awake()
     {
         m_obParent = null;
@@ -39,6 +46,11 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
     protected void initCommunicateValue()
     {
         m_value = new CommunicationTypeDataClass(m_nId, m_obMine, parameter);
+    }
+
+    public void InitCommunicateValue(CommunicationTypeDataClass value)
+    {
+        m_value = value;
     }
 
     public void InitCommunicateValue(string []param)
@@ -66,6 +78,13 @@ public class UIEvent : MonoBehaviour,IPointerClickHandler,IPointerUpHandler,IPoi
     public virtual void OnPointerDown(PointerEventData eventData)
     {
         if ((m_nOption & DefineManager.POINTER_DOWN) != DefineManager.POINTER_DOWN) return;
+
+        if(m_eventCallBack != null)
+        {
+            m_eventCallBack(m_value);
+            return;
+        }
+
         UIEventManager.OnClickDownEvent(m_value);  
     }
 }

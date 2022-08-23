@@ -20,6 +20,9 @@ public class GameUIManager : MonoBehaviour
     private GameObject      m_obSkillStatus;
     private GameObject      m_obGameOver;
     private GameObject      m_obCraftingList;
+    private GameObject      m_obCraftDelete;
+    [SerializeField]
+    private GameObject      m_obCraftDeleteOk;
 
     [SerializeField]
     private Image           m_ImageLevelGage;
@@ -90,6 +93,8 @@ public class GameUIManager : MonoBehaviour
         m_obGameOver                = GameObject.Find("GameOver");
         m_obEndGame                 = GameObject.Find("EndGame");
         m_obCraftingList            = GameObject.Find("CraftingList");
+        m_obCraftDelete             = GameObject.Find("CraftDelete");
+        
 
         m_TextLevelText.text        = "1 Lv";
         m_TextLevelPercent.text     = "0 %";
@@ -170,6 +175,7 @@ public class GameUIManager : MonoBehaviour
         if(m_obGameOver             != null)    m_obGameOver.SetActive          (false);
         if(m_obEndGame              != null)    m_obEndGame.SetActive           (false);
         if (m_obCraftingList        != null)    m_obCraftingList.SetActive      (false);
+        if (m_obCraftDelete         != null)    m_obCraftDelete.SetActive       (false);
 
         if (m_obRestartScreen != null)
         {
@@ -246,6 +252,19 @@ public class GameUIManager : MonoBehaviour
     public void SetActiveCraftingList(bool flag)
     {
         m_obCraftingList.SetActive(flag);
+    }
+
+    public void SetActiveCraftDelete(bool flag)
+    {
+        m_obCraftDelete.SetActive(flag);
+        m_obCraftDelete.transform.GetChild(0).GetChild(2);
+    }
+
+    public void SetCraftDeleteOkCallBack(EventCallBack callBack, CommunicationTypeDataClass value)
+    {
+        Clicked temp = m_obCraftDeleteOk.GetComponent<Clicked>();
+        temp.EventCallBack = callBack;
+        temp.InitCommunicateValue(value);
     }
 
     public void SetPositionTouchPad(Vector3 Position)

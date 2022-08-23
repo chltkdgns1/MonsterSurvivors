@@ -32,7 +32,7 @@ public class CommunicationTypeDataClass
 
     public string GetParamIndex(int index)
     {
-        if (index < 0 || m_sParameter.Length >= index) return "";           
+        if (index < 0 || m_sParameter.Length <= index) return "";           
         return m_sParameter[index];
     }
 

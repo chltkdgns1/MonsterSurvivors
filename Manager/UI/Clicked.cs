@@ -47,6 +47,13 @@ public class Clicked : MonoBehaviour            // UI 가 클릭되었을 때
     private bool m_bUseChildResize = true;
     private List<RectTransform> m_ImageChildList = new List<RectTransform>();
 
+    private event EventCallBack m_eventCallBack = null;
+
+    public EventCallBack EventCallBack
+    {
+        set { m_eventCallBack = value; }
+    }
+
     private void Awake()
     {
         m_obMine = null;
@@ -78,6 +85,11 @@ public class Clicked : MonoBehaviour            // UI 가 클릭되었을 때
     void initCommunicateValue()
     {
         m_value = new CommunicationTypeDataClass(m_nEndStartType, m_obMine, parameter);
+    }
+
+    public void InitCommunicateValue(CommunicationTypeDataClass value)
+    {
+        m_value = value;
     }
 
     public void MoveSmall()
@@ -150,6 +162,13 @@ public class Clicked : MonoBehaviour            // UI 가 클릭되었을 때
 
     public void Execute()
     {
+
+        if(m_eventCallBack != null)
+        {
+            m_eventCallBack(m_value);
+            return;
+        }
+
         UIClickStartManager.Execute(m_value);
     }
 }

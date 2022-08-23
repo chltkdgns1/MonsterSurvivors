@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class CraftUIManager : MonoBehaviour
 {
- //static public SkillStatusManager instance = null;
+    //static public SkillStatusManager instance = null;
+
+    public static CraftUIManager instance = null;
 
     [SerializeField]
     private SubArray[] m_ObPrefabsCraftUI;
@@ -14,6 +16,7 @@ public class CraftUIManager : MonoBehaviour
     private GameObject m_ObParent;
 
     private List<List<GameObject>> m_ObCraftUIList = new List<List<GameObject>>();
+    private List<List<UIEventColor>> m_UIEventColorList = new List<List<UIEventColor>>();
 
     private int m_nTagState = 0;
 
@@ -38,19 +41,25 @@ public class CraftUIManager : MonoBehaviour
         for (int i = 0; i < nGroupSize; i++)
         {
             List<GameObject> tempCraftList = new List<GameObject>();
+            List<UIEventColor> tempUIEventColorList = new List<UIEventColor>();
             int sz = m_ObPrefabsCraftUI[i].m_subArray.Length;
 
             for (int k = 0; k < sz; k++)
             {
                 tempCraftList.Add(Instantiate(m_ObPrefabsCraftUI[i].m_subArray[k], m_ObParent.transform));
+                tempUIEventColorList.Add(tempCraftList[k].GetComponent<UIEventColor>());
                 tempCraftList[k].SetActive(false);
             }
             m_ObCraftUIList.Add(tempCraftList);
+            m_UIEventColorList.Add(tempUIEventColorList);
         }
     }
 
     void AwakeInit() // Awake 에서만 초기화
     {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+
         AddPrefabs();
     }
 
@@ -140,6 +149,39 @@ public class CraftUIManager : MonoBehaviour
             for(int k = 0; k < len; k++)
             {
                 m_ObCraftUIList[i][k].SetActive(false);
+            }
+        }
+    }
+
+    void SetInitColorAllGroup() // 모든 그룹의 색상을 원래 색상으로 되돌림.
+    {
+        int nSize = m_UIEventColorList.Count;
+        for (int i = 0; i < nSize; i++)
+        {
+            int len = m_UIEventColorList[i].Count;
+            for (int k = 0; k < len; k++)
+            {
+                m_UIEventColorList[i][k].SetColor(true);
+            }
+        }
+        CraftManager.instance.SelectCrafting(null);
+        // 아무것도 선택하지 않은 상태로 변경
+    }
+
+    public void OnGroupElement(UIEventColor eventColor){
+        SetInitColorAllGroup();
+
+        int nSize = m_UIEventColorList.Count;
+        for (int i = 0; i < nSize; i++)
+        {
+            int len = m_UIEventColorList[i].Count;
+            for (int k = 0; k < len; k++)
+            {
+                if (m_UIEventColorList[i][k] == eventColor)
+                {
+                    m_UIEventColorList[i][k].SetColor(false);
+                    return;
+                }
             }
         }
     }

@@ -134,6 +134,7 @@ public class MouseClickManager : MonoBehaviour
         else if (bClick == true)
         {
             if (EventSystem.current.IsPointerOverGameObject() == true) return;
+          
             SendClick(Input.mousePosition);
             m_vFirstClick = Input.mousePosition; // 마우스 첫 터치를 더블클릭의 첫번째 위치로 선정
         }

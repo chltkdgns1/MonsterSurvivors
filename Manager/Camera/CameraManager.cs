@@ -51,4 +51,9 @@ public class CameraManager : MonoBehaviour
     {
         m_CompMove2D.Run(transform.position + new Vector3(vPosition.x, vPosition.y, transform.position.z));
     }
+
+    public void SetPositionXY(Vector3 position)
+    {
+        transform.position = new Vector3(position.x, position.y, transform.position.z);
+    }
 }

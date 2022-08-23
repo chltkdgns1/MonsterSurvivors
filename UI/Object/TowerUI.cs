@@ -77,7 +77,7 @@ public class TowerUI : StructureUI
 
     public new void StartInit() // Start 에서만 초기화
     {
-        m_Tower = DataManage.InitData.instance.GetCraftTower(m_nType);
+        m_Tower = DataManage.InitData.instance.GetCraftTower(m_nType); 
         m_Event = GetComponent<UIEvent>();
         SetEventParam();
         SetImage();
