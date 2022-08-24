@@ -10,7 +10,7 @@ public class CraftCheckManager : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        InitEnabe();
     }
 
     private void Start()
@@ -18,15 +18,25 @@ public class CraftCheckManager : MonoBehaviour
         InitStart();
     }
 
-    void InitStart()
+    void InitEnabe()
     {
         InitPlayerPoints();
+        CheckCollisionMonster();
+    }
+
+    void InitStart()
+    {
+
     }
 
     void InitPlayerPoints()
     {
         m_PlayerPointsList.Clear();
-        Vector2[] temp = PlayerOffline2D.instance.GetComponent<PolygonCollider2D>().points;
+        PolygonCollider2D polygonComp = PlayerOffline2D.instance.GetComponent<PolygonCollider2D>();
+
+        if (polygonComp == null) return;
+
+        Vector2[] temp = polygonComp.points;
         for (int i = 0; i < temp.Length; i++) m_PlayerPointsList.Add(temp[i]);
         m_PlayerPointsList.Add(PlayerOffline2D.instance.transform.position);
     }
@@ -54,6 +64,36 @@ public class CraftCheckManager : MonoBehaviour
             if (flag) return flag;
         }
         return false;
+    }
+
+    void CheckCollisionMonster()
+    {
+        List<float> tempList = MonsterManager.instance.GetMonsterCollisionRadList();
+        List<GameObject> tempMonsterList = MonsterManager.instance.GetMonsterObject();
+
+        // tempList 와 tempMonsterList 의 사이즈는 같음.
+
+        int sz = tempList.Count;
+        for (int i = 0; i < sz; i++)
+        {
+            Vector3 pos = tempMonsterList[i].transform.position;
+            List<Solid2D> solidList = GetSolids(pos);
+
+            int solSz = solidList.Count;
+            for(int k = 0; k < solSz; k++)
+            {
+                bool flag = CollisionReneual2D.IsCollisionSolid(solidList[k], pos, tempList[i]);
+                // pos 를 기준으로 하여 8방위와 가운데 사각형이 tempList[i] 반지름 내에 충돌하는지 판단.
+                if (flag)
+                {
+                    Vector3? vCenterPoint = solidList[k].GetCenterPoint();
+                    if (vCenterPoint == null) continue;
+                    long lKey = Module.GetHashFunc(vCenterPoint.Value);
+                    CraftManager.instance.SetTemporaryEle(lKey);
+                    // 충돌이 난 블록은 충돌 처리함.
+                }
+            }
+        }
     }
 
     private void Update()

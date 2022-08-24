@@ -8,7 +8,7 @@ public class Solid2D // 직사각형
     static private int[] m_dy = { 1, -1, 1, -1 };
 
     private List<Vector3> m_Position;
-    private Vector3 m_CenterPosition;
+    private Vector3? m_CenterPosition;
 
     public Solid2D()
     {
@@ -19,6 +19,8 @@ public class Solid2D // 직사각형
     {
         m_CenterPosition = centerPosition;
     }
+
+    public Vector3? GetCenterPoint() { return m_CenterPosition; }
 
     public void Add(Vector3 vPosition)
     {
@@ -138,9 +140,12 @@ public class Solid2D // 직사각형
     public void SetEdgePoint(float fRad)
     {
         m_Position.Clear();
+        if (m_CenterPosition == null) return;
         for(int i = 0; i < 4; i++)
         {
-            m_Position.Add(new Vector3(m_CenterPosition.x + m_dx[i] * fRad, m_CenterPosition.y + m_dy[i] * fRad, m_CenterPosition.z));
+
+            Vector3 pos = m_CenterPosition.Value;
+            m_Position.Add(new Vector3(pos.x + m_dx[i] * fRad, pos.y + m_dy[i] * fRad, pos.z));
         }
     }
 }

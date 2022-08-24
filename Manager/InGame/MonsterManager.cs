@@ -147,4 +147,14 @@ public class MonsterManager : MonoBehaviour
         Debug.Log("몬스터 사이즈 : " + m_ObMonster.Count);
         yield break;
     }
+
+    public List<float> GetMonsterCollisionRadList()
+    {
+        return m_RadList;
+    }
+
+    public List<GameObject> GetMonsterObject()
+    {
+        return m_ObMonster;
+    }
 }

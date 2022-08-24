@@ -376,6 +376,8 @@ public class Module : MonoBehaviour
         nXpos += (fDiffX >= 0f ? 1 : 0);
         nYpos += (fDiffY >= 0f ? 1 : 0);
         return nXpos * 1000000 + nYpos;
+        //position = GetGrid(position);
+        //return (long)((position.x + 1e6) * 1e6) + (long)(position.y + 1e6);
     }
 
     static public Vector3 ReversePosition(Vector3 vCenter, Vector3 vDir)

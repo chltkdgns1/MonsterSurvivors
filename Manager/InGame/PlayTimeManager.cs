@@ -24,6 +24,7 @@ public class PlayTimeManager : MonoBehaviour
 
     void Update()
     {
+        if (DefineManager.GameState.PLAYING_STATE_NOMAL != PlayingGameManager.GetGameState()) return;
         m_fTime += Time.deltaTime;
     }
 

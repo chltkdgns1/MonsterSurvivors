@@ -68,6 +68,7 @@ public class CraftUIManager : MonoBehaviour
         m_nTagState = 0;
         UnPrintAllGroup();
         PrintGroup();
+        SetInitColorAllGroup();
     }
 
     void InitObject()

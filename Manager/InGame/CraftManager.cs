@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CraftState
+{
+    IDLE = 0,
+    TEMPORARY = 1,
+    REAL = 2
+}
+
 struct CraftData
 {
     public int m_nGroup;
@@ -10,12 +17,15 @@ struct CraftData
 
     public Vector3 m_position;
 
-    public CraftData(int nGroup, int nType, int nIndex, Vector3 position)
+    public bool m_Temporary;
+
+    public CraftData(int nGroup, int nType, int nIndex, Vector3 position, bool temporary = false)
     {
         m_nGroup = nGroup;
         m_nType = nType;
         m_nIndex = nIndex;
         m_position = position;
+        m_Temporary = temporary;
     }
 }
 
@@ -23,11 +33,15 @@ class CraftElement
 {
     public GameObject m_object;
     public long m_lkey;
+    public CraftState m_state;  // 0 : »èÁ¦, ¶Ç´Â ºñÈ°¼º »óÅÂ
+                                // 1 : ÀÓ½Ã »ý¼º »óÅÂ
+                                // 2 : ½ÇÁ¦·Î ¸Ê¿¡ Àû¿ëµÈ ¸®¾ó »óÅÂ
 
-    public CraftElement(GameObject ob, long key = -1)
+    public CraftElement(GameObject ob, long key = -1, CraftState state = CraftState.IDLE)
     {
         m_object = ob;
         m_lkey = key;
+        m_state = state;
     }
 }
 
@@ -39,6 +53,7 @@ class CraftObject
     public int m_nGroup;
     public int m_nType;
     public FixCallBack m_fixCallBack;
+    public FixCallBack m_fixCallBackReal;
 
     public CraftObject(GameObject Prefabs, int nGroup, int nType)
     {
@@ -72,18 +87,24 @@ class CraftObject
         {
             bool bFlag = Sort(); // ÀçÁ¤·Ä , true : ÀçÁ´·Ä ½Ã, ¿ÀºêÁ§Æ® °ø°£ ³²À½ false : Ãß°¡ÀûÀÎ °ø°£ »ý¼º ÇÊ¿ä.
             if (bFlag == false) AddSize(m_Prefabs);
+            //AddSize(m_Prefabs);
         }
 
         m_CraftElement[UseCount].m_object.transform.position = vPosition;
         m_CraftElement[UseCount].m_lkey = key;
         m_CraftElement[UseCount].m_object.SetActive(true);
+        m_CraftElement[UseCount].m_state = CraftState.TEMPORARY;
         UseCount++;
         return UseCount - 1;
     }  
 
     public void SetUnActive(int index)
     {
-        if (index < 0 || index >= m_CraftElement.Count) return;
+        if (index < 0 || index >= m_CraftElement.Count)
+        {
+            Debug.LogError("    public void SetUnActive(int index) Error : " + index);
+            return;
+        }
         m_CraftElement[index].m_object.SetActive(false);
     }
     
@@ -94,9 +115,13 @@ class CraftObject
         {
             if (m_CraftElement[i].m_object.activeSelf == false)
             {
-                if(m_CraftElement[endIndex - 1].m_object.activeSelf)
-                    m_fixCallBack(m_CraftElement[endIndex - 1].m_lkey, i);
-                Module.Swap<CraftElement>(m_CraftElement, i, --endIndex);
+                if (m_CraftElement[endIndex - 1].m_object.activeSelf)
+                {
+                    if (m_CraftElement[endIndex - 1].m_state == CraftState.TEMPORARY)   m_fixCallBack(m_CraftElement[endIndex - 1].m_lkey, i);                   
+                    else if(m_CraftElement[endIndex - 1].m_state == CraftState.REAL)    m_fixCallBackReal(m_CraftElement[endIndex - 1].m_lkey, i);                 
+                    Module.Swap<CraftElement>(m_CraftElement, i, endIndex - 1);
+                }
+                endIndex--;
             }
         }
 
@@ -164,6 +189,8 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
     {
         foreach(KeyValuePair<long,CraftData> temp in m_TemporaryDic)
         {
+            if (temp.Value.m_Temporary) continue; // ÀÓ½ÃÀÇ °æ¿ì ºí·ÏÀ» ¸ø Áþ°ÔÇÏ´Â ºí·Ï
+
             m_DicMap[temp.Key] = temp.Value;
 
             int group = temp.Value.m_nGroup;
@@ -171,7 +198,9 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
             int index = temp.Value.m_nIndex;
 
             GlitterEffect tempEffect = m_CraftObjectPool[group].m_CraftObject[type].m_CraftElement[index].m_object.GetComponent<GlitterEffect>();
+            m_CraftObjectPool[group].m_CraftObject[type].m_CraftElement[index].m_state = CraftState.REAL;
             tempEffect.UnRegister();
+            // ¿Ï·áÇßÀ» °æ¿ì¿¡¸¸ UnRegister ¸¦ ÇØÁØ´Ù.
         }
         m_TemporaryDic.Clear();
     }
@@ -179,13 +208,16 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
     public void CancleCrafting()
     {
         foreach (KeyValuePair<long, CraftData> temp in m_TemporaryDic)
-        {          
+        {
+            if (temp.Value.m_Temporary) continue; // ÀÓ½ÃÀÇ °æ¿ì ºí·ÏÀ» ¸ø Áþ°ÔÇÏ´Â ºí·Ï
+
             int group = temp.Value.m_nGroup;
             int type = temp.Value.m_nType;
             int index = temp.Value.m_nIndex;
 
-            GlitterEffect tempEffect = m_CraftObjectPool[group].m_CraftObject[type].m_CraftElement[index].m_object.GetComponent<GlitterEffect>();
-            tempEffect.UnRegister();
+            m_CraftObjectPool[group].m_CraftObject[type].m_CraftElement[index].m_lkey = -1;
+            m_CraftObjectPool[group].m_CraftObject[type].m_CraftElement[index].m_state = CraftState.IDLE;
+
             m_CraftObjectPool[group].m_CraftObject[type].SetUnActive(index);
         }
         m_TemporaryDic.Clear();
@@ -228,6 +260,7 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
             m_CraftObjectPool[0].m_CraftObject[i].m_CraftElement = towerList;
             m_CraftObjectPool[0].m_CraftObject[i].SetActiveAll(false);
             m_CraftObjectPool[0].m_CraftObject[i].m_fixCallBack = SortKey;
+            m_CraftObjectPool[0].m_CraftObject[i].m_fixCallBackReal = SortKeyReal;
         }
 
         for (int i = 0; i < tempStructure.Count; i++)
@@ -241,7 +274,7 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
             m_CraftObjectPool[1].m_CraftObject[i].m_CraftElement = towerList;
             m_CraftObjectPool[1].m_CraftObject[i].SetActiveAll(false);
             m_CraftObjectPool[1].m_CraftObject[i].m_fixCallBack = SortKey;
-
+            m_CraftObjectPool[1].m_CraftObject[i].m_fixCallBackReal = SortKeyReal;
         }
 
         for (int i = 0; i < tempTrap.Count; i++)
@@ -255,6 +288,7 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
             m_CraftObjectPool[2].m_CraftObject[i].m_CraftElement = towerList;
             m_CraftObjectPool[2].m_CraftObject[i].SetActiveAll(false);
             m_CraftObjectPool[2].m_CraftObject[i].m_fixCallBack = SortKey;
+            m_CraftObjectPool[2].m_CraftObject[i].m_fixCallBackReal = SortKeyReal;
         }
     }
 
@@ -273,6 +307,7 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
 
     }
 
+    // »èÁ¦ÀÇ °æ¿ì, È­¸é ¿òÁ÷ÀÓ°ú Ãæµ¹ÀÌ ³¯ ¼ö ÀÖÀ½. µû¶ó¼­ ÅÍÄ¡¸¦ ¶®À» ¶§ ÀÌº¥Æ®°¡ µé¾î¿Í¾ßÇÔ.
     public void OnOneTouch(Vector3 touchPoint)
     {
         //Vector3Int vGridPosition = Module.GetGridInt(Camera.main.ScreenToWorldPoint(touchPoint));
@@ -282,10 +317,15 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
         if (m_TemporaryDic.ContainsKey(key))
         {
             CraftData temp = m_TemporaryDic[key];
+
+            if (temp.m_Temporary) return; // ÀÓ½Ã ºí·°ÀÎ °æ¿ì Å»Ãâ
+
+
             Debug.Log("»èÁ¦ : " + key);
             Debug.Log("temp : " + temp.m_nGroup + " " + temp.m_nType + "  " + temp.m_nIndex);
             m_CraftObjectPool[temp.m_nGroup].m_CraftObject[temp.m_nType].SetUnActive(temp.m_nIndex);
             m_CraftObjectPool[temp.m_nGroup].m_CraftObject[temp.m_nType].m_CraftElement[temp.m_nIndex].m_lkey = -1;
+            m_CraftObjectPool[temp.m_nGroup].m_CraftObject[temp.m_nType].m_CraftElement[temp.m_nIndex].m_state = CraftState.IDLE; // »èÁ¦ ¶Ç´Â ºñÈ°¼º »óÅÂ
             m_TemporaryDic.Remove(key);
             return;
         }
@@ -300,13 +340,28 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
             GameUIManager.instance.SetCraftDeleteOkCallBack((CommunicationTypeDataClass value) =>
             {
                 string sValue = value.GetParamIndex(0);
-                m_DicMap.Remove(long.Parse(sValue));
+
+                long deletekey = long.Parse(sValue);
+                CraftData craftTemp = m_DicMap[deletekey];
+                m_CraftObjectPool[craftTemp.m_nGroup].m_CraftObject[craftTemp.m_nType].m_CraftElement[craftTemp.m_nIndex].m_lkey = -1;
+                m_CraftObjectPool[craftTemp.m_nGroup].m_CraftObject[craftTemp.m_nType].m_CraftElement[craftTemp.m_nIndex].m_state = CraftState.IDLE; // »èÁ¦ ¶Ç´Â ºñÈ°¼º »óÅÂ
+
+                m_DicMap.Remove(deletekey);
+
                 value.GetGameObject().SetActive(false);
                 value.GetGameObject().GetComponent<GlitterEffect>().Register();
                 GameUIManager.instance.SetActiveCraftDelete(false);
                 PlayingGameManager.SetOutState(DefineManager.GameState.PLAYING_STATE_PAUSE);
+
             }, new CommunicationTypeDataClass(0, m_CraftObjectPool[temp.m_nGroup].m_CraftObject[temp.m_nType].m_CraftElement[temp.m_nIndex].m_object, new string[] { key.ToString() }));
         }
+    }
+
+    public void SetTemporaryEle(long lKey)
+    {
+        if (m_TemporaryDic.ContainsKey(lKey)) return;
+        m_TemporaryDic.Add(lKey, new CraftData(0, 0, 0,new Vector3(0,0,0),true));
+        // ÀÓ½ÃÀûÀÎ ¿ä¼Ò·Î Ãß°¡
     }
 
     public void OnDrag(Vector3 firstTouch, Vector3 touchPoint)
@@ -379,9 +434,26 @@ public class CraftManager : MonoBehaviour, ITouchCraftManager  // Å©·¡ÇÁÆÃ¿¡ °ü·
 
     public void SortKey(long key, int index)
     {
+        if (m_TemporaryDic.ContainsKey(key) == false)
+        {
+            Debug.LogError("  public void SortKey(long key, int index) ¹ö±×¹ö±× : " + key + " " + index);
+            return;
+        }
         CraftData temp = m_TemporaryDic[key];
         temp.m_nIndex = index;
         m_TemporaryDic[key] = temp;
+    }
+
+    public void SortKeyReal(long key, int index)
+    {
+        if (m_DicMap.ContainsKey(key) == false)
+        {
+            Debug.LogError("  public void SortKeyReal(long key, int index) ¹ö±×¹ö±× : " + key + " " + index);
+            return;
+        }
+        CraftData temp = m_DicMap[key];
+        temp.m_nIndex = index;
+        m_DicMap[key] = temp;
     }
 }
 

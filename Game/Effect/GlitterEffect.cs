@@ -9,13 +9,25 @@ public class GlitterEffect : MonoBehaviour, IEffect
     [SerializeField]
     private Color m_EffectColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 
+    void OnEnable()
+    {
+        Register();
+    }
+
+    private void OnDisable()
+    {
+        UnRegister();
+    }
+
     public void Register()
     {
+        if (GlitterEffectManager.instance == null) return;
         GlitterEffectManager.instance.Register(this);
     }
 
     public void UnRegister()
     {
+        if (GlitterEffectManager.instance == null) return;
         GlitterEffectManager.instance.UnRegister(this);
     }
 
@@ -27,7 +39,7 @@ public class GlitterEffect : MonoBehaviour, IEffect
 
     void Start()
     {
-        Register();
+        //Register();
     }
 
     public void On()
